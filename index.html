@@ -565,7 +565,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 
 <div id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 // ════════════════════════════════════════════
 // DATA
@@ -626,28 +625,23 @@ const TODAY_IDX = (_dow >= 1 && _dow <= 5) ? _dow - 1 : -1; // -1 = fim de seman
 const SB_URL = 'https://beengflbvycyhdvkwjsi.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJlZW5nZmxidnljeWhkdmt3anNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDQwMjMsImV4cCI6MjA4OTQyMDAyM30.myvTrvz8TpncH241MF4FTq-sbqA-Pu3IqJFVvj9mNok';
 const SB_USER = 'adrianlucastdk';
-let _sb = null;
-
-function getSB() {
-  if(_sb) return _sb;
-  if(window.supabase) {
-    _sb = window.supabase.createClient(SB_URL, SB_KEY);
-  }
-  return _sb;
-}
+const SB_HEADERS = {
+  'apikey': SB_KEY,
+  'Authorization': 'Bearer ' + SB_KEY,
+  'Content-Type': 'application/json',
+  'Prefer': 'return=minimal'
+};
 
 async function sbGet() {
   try {
-    const sb = getSB();
-    if(!sb) return null;
-    const { data, error } = await sb.from('forja_data')
-      .select('data')
-      .eq('user_id', SB_USER)
-      .single();
-    if(error && error.code !== 'PGRST116') { console.error('sbGet error:', error); return null; }
-    if(!data) return null;
-    const cloudData = data.data;
-    // Restore local photos (stored only on this device)
+    const r = await fetch(SB_URL + '/rest/v1/forja_data?user_id=eq.' + SB_USER + '&select=data&limit=1', {
+      method: 'GET',
+      headers: SB_HEADERS
+    });
+    if(!r.ok) { console.error('sbGet http error:', r.status, await r.text()); return null; }
+    const rows = await r.json();
+    if(!rows || !rows.length) return null;
+    const cloudData = rows[0].data;
     try {
       const localRaw = localStorage.getItem('fgym2');
       if(localRaw) {
@@ -661,25 +655,22 @@ async function sbGet() {
       }
     } catch(e) {}
     return cloudData;
-  } catch(e) { console.error('sbGet error:', e); return null; }
+  } catch(e) { console.error('sbGet error:', e.message); return null; }
 }
 
 async function sbSave(data) {
   try {
-    const sb = getSB();
-    if(!sb) return false;
     const cloudData = JSON.parse(JSON.stringify(data));
-    if(cloudData.shapes) {
-      cloudData.shapes = cloudData.shapes.map(s => ({...s, fotos: []}));
-    }
-    const { error } = await sb.from('forja_data').upsert({
-      user_id: SB_USER,
-      data: cloudData,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id' });
-    if(error) { console.error('sbSave error:', error); return false; }
+    if(cloudData.shapes) cloudData.shapes = cloudData.shapes.map(s => ({...s, fotos: []}));
+    const body = JSON.stringify({ user_id: SB_USER, data: cloudData, updated_at: new Date().toISOString() });
+    const r = await fetch(SB_URL + '/rest/v1/forja_data', {
+      method: 'POST',
+      headers: { ...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body
+    });
+    if(!r.ok) { console.error('sbSave http error:', r.status, await r.text()); return false; }
     return true;
-  } catch(e) { console.error('sbSave error:', e); return false; }
+  } catch(e) { console.error('sbSave error:', e.message); return false; }
 }
 
 function showSyncToast(msg, ok=true) {
