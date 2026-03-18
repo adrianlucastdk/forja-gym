@@ -616,7 +616,8 @@ const DAYS = [
   {id:'qui',lbl:'Quinta-Feira', short:'QUI'},
   {id:'sex',lbl:'Sexta-Feira',  short:'SEX'},
 ];
-const TODAY_IDX = 1; // Terça 17/03/2026
+const _dow = new Date().getDay(); // 0=Dom,1=Seg,2=Ter,3=Qua,4=Qui,5=Sex,6=Sáb
+const TODAY_IDX = (_dow >= 1 && _dow <= 5) ? _dow - 1 : -1; // -1 = fim de semana
 
 // ════════════════════════════════════════════
 // SUPABASE CONFIG
