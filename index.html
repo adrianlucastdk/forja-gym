@@ -674,12 +674,15 @@ let _currentUser = null;
 let _authToken = null;
 
 function getUserId() {
-  return _currentUser?.id || SB_USER;
+  // Use email as user_id for stability (UUID changes, email doesn't)
+  return _currentUser?.email || _currentUser?.id || SB_USER;
 }
 function getAuthHeaders() {
+  // Always use anon key — our RLS policy grants access to anon role
+  // User token would switch to 'authenticated' role which needs separate policy
   return {
     'apikey': SB_KEY,
-    'Authorization': 'Bearer ' + (_authToken || SB_KEY),
+    'Authorization': 'Bearer ' + SB_KEY,
     'Content-Type': 'application/json',
   };
 }
