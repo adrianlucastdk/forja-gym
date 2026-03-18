@@ -467,6 +467,31 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 .sync-toast.show{opacity:1}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--gn);flex-shrink:0}
 .sync-dot.err{background:var(--red)}
+
+/* ── LOGIN SCREEN ── */
+#login-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9998;padding:32px 24px}
+#login-screen.hidden{display:none}
+.login-logo{font-family:var(--bb);font-size:32px;letter-spacing:5px;color:var(--red);margin-bottom:8px}
+.login-sub{font-size:12px;color:var(--txt3);letter-spacing:2px;margin-bottom:48px;text-transform:uppercase}
+.login-card{background:var(--c1);border:1px solid var(--border);border-radius:20px;padding:28px 24px;width:100%;max-width:360px}
+.login-title{font-size:18px;font-weight:700;margin-bottom:6px;color:var(--txt)}
+.login-desc{font-size:12px;color:var(--txt3);margin-bottom:24px;line-height:1.6}
+.login-field{margin-bottom:14px}
+.login-label{font-size:11px;font-weight:700;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;display:block}
+.login-input{width:100%;background:var(--c2);border:1px solid var(--border2);border-radius:10px;color:var(--txt);font-size:15px;font-family:var(--font);padding:12px 14px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.login-input:focus{border-color:var(--red)}
+.login-btn{width:100%;padding:14px;border-radius:12px;background:var(--red);color:#fff;font-size:15px;font-weight:700;font-family:var(--font);border:none;cursor:pointer;margin-top:8px;transition:background .2s;letter-spacing:.5px}
+.login-btn:active{background:var(--rdark)}
+.login-btn:disabled{opacity:.5;cursor:not-allowed}
+.login-toggle{text-align:center;margin-top:16px;font-size:13px;color:var(--txt3)}
+.login-toggle a{color:var(--red);cursor:pointer;font-weight:600;text-decoration:none}
+.login-error{background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.3);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:14px;display:none}
+.login-error.show{display:block}
+.login-success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--gn);margin-bottom:14px;display:none}
+.login-success.show{display:block}
+.login-spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;margin-right:6px;vertical-align:middle}
+.logout-btn{display:flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--txt3);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s}
+.logout-btn:active{background:var(--c2)}
 </style>
 </head>
 <body>
@@ -607,6 +632,16 @@ const TREINOS = {
     {id:'mart',    nome:'Bíceps Martelo',   series:4,reps:'8',     pesos:[12,12,12,12],rest:75},
     {id:'scott',   nome:'Scott',            series:4,reps:'falha', pesos:[null,null,null,null], rest:75},
   ]},
+  sab:{nome:'TREINO LIVRE',icone:'⚡',tags:['Livre','Extra'],exercicios:[
+    {id:'sab-ex1',nome:'Exercício 1',series:3,reps:'8-12',pesos:[null,null,null],rest:90},
+    {id:'sab-ex2',nome:'Exercício 2',series:3,reps:'8-12',pesos:[null,null,null],rest:90},
+    {id:'sab-ex3',nome:'Exercício 3',series:3,reps:'8-12',pesos:[null,null,null],rest:90},
+  ]},
+  dom:{nome:'TREINO LIVRE',icone:'⚡',tags:['Livre','Extra'],exercicios:[
+    {id:'dom-ex1',nome:'Exercício 1',series:3,reps:'8-12',pesos:[null,null,null],rest:90},
+    {id:'dom-ex2',nome:'Exercício 2',series:3,reps:'8-12',pesos:[null,null,null],rest:90},
+    {id:'dom-ex3',nome:'Exercício 3',series:3,reps:'8-12',pesos:[null,null,null],rest:90},
+  ]},
 };
 
 const DAYS = [
@@ -615,28 +650,47 @@ const DAYS = [
   {id:'qua',lbl:'Quarta-Feira', short:'QUA'},
   {id:'qui',lbl:'Quinta-Feira', short:'QUI'},
   {id:'sex',lbl:'Sexta-Feira',  short:'SEX'},
+  {id:'sab',lbl:'Sábado',       short:'SÁB'},
+  {id:'dom',lbl:'Domingo',      short:'DOM'},
 ];
 const _dow = new Date().getDay(); // 0=Dom,1=Seg,2=Ter,3=Qua,4=Qui,5=Sex,6=Sáb
-const TODAY_IDX = (_dow >= 1 && _dow <= 5) ? _dow - 1 : -1; // -1 = fim de semana
+// Map JS day to DAYS index: Mon=0,Tue=1,Wed=2,Thu=3,Fri=4,Sat=5,Sun=6
+const _dowMap = {1:0,2:1,3:2,4:3,5:4,6:5,0:6};
+const TODAY_IDX = _dowMap[_dow] ?? -1;
+
+// Which days have active training (user-configurable, saved in S)
+function getActiveDays() {
+  if(!S.activeDays) return ['seg','ter','qua','qui','sex']; // default Mon-Fri
+  return S.activeDays;
+}
 
 // ════════════════════════════════════════════
 // SUPABASE CONFIG
 // ════════════════════════════════════════════
 const SB_URL = 'https://beengflbvycyhdvkwjsi.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJlZW5nZmxidnljeWhkdmt3anNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDQwMjMsImV4cCI6MjA4OTQyMDAyM30.myvTrvz8TpncH241MF4FTq-sbqA-Pu3IqJFVvj9mNok';
-const SB_USER = 'adrianlucastdk';
-const SB_HEADERS = {
-  'apikey': SB_KEY,
-  'Authorization': 'Bearer ' + SB_KEY,
-  'Content-Type': 'application/json',
-  'Prefer': 'return=minimal'
-};
+const SB_USER = 'adrianlucastdk'; // fallback, replaced by auth
+let _currentUser = null;
+let _authToken = null;
+
+function getUserId() {
+  return _currentUser?.id || SB_USER;
+}
+function getAuthHeaders() {
+  return {
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + (_authToken || SB_KEY),
+    'Content-Type': 'application/json',
+  };
+}
+// SB_HEADERS is now dynamic via getAuthHeaders()
 
 async function sbGet() {
   try {
-    const r = await fetch(SB_URL + '/rest/v1/forja_data?user_id=eq.' + SB_USER + '&select=data&limit=1', {
+    const uid = getUserId();
+    const r = await fetch(SB_URL + '/rest/v1/forja_data?user_id=eq.' + uid + '&select=data&limit=1', {
       method: 'GET',
-      headers: SB_HEADERS
+      headers: getAuthHeaders()
     });
     if(!r.ok) { console.error('sbGet http error:', r.status, await r.text()); return null; }
     const rows = await r.json();
@@ -660,12 +714,13 @@ async function sbGet() {
 
 async function sbSave(data) {
   try {
+    const uid = getUserId();
     const cloudData = JSON.parse(JSON.stringify(data));
     if(cloudData.shapes) cloudData.shapes = cloudData.shapes.map(s => ({...s, fotos: []}));
-    const body = JSON.stringify({ user_id: SB_USER, data: cloudData, updated_at: new Date().toISOString() });
+    const body = JSON.stringify({ user_id: uid, data: cloudData, updated_at: new Date().toISOString() });
     const r = await fetch(SB_URL + '/rest/v1/forja_data', {
       method: 'POST',
-      headers: { ...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      headers: { ...getAuthHeaders(), 'Prefer': 'resolution=merge-duplicates,return=minimal' },
       body
     });
     if(!r.ok) { console.error('sbSave http error:', r.status, await r.text()); return false; }
@@ -741,34 +796,53 @@ function _doNav(v) {
 // ════════════════════════════════════════════
 function renderWeek() {
   const el = document.getElementById('v-week');
+  const activeDays = getActiveDays();
   let h = '<div class="slabel">Esta Semana</div>';
   DAYS.forEach((d,i) => {
     const t = TREINOS[d.id];
     const today = i === TODAY_IDX;
+    const isActive = activeDays.includes(d.id);
     const tags = t.tags.map(tg => `<span class="dtag">${tg}</span>`).join('');
-    h += `<div class="dcard${today?' today':''}" onclick="openTreino('${d.id}')">
-      <div class="dbadge">${d.short}</div>
-      <div class="dinfo">
-        <div class="dday">${d.lbl}</div>
-        <div class="dnome">${t.icone} ${t.nome}</div>
-        <div class="dtags">${tags}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <button onclick="event.stopPropagation();openEdit('${d.id}')" style="width:32px;height:32px;border-radius:8px;background:var(--c2);border:1px solid var(--border2);color:var(--txt3);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:14px">✏️</button>
-        <div class="darrow">›</div>
-      </div>
-    </div>`;
-  });
-  ['Sábado','Domingo'].forEach(day => {
-    h += `<div class="dcard rest">
-      <div class="dbadge" style="font-size:9px;opacity:.5">${day.slice(0,3).toUpperCase()}</div>
-      <div class="dinfo">
-        <div class="dday" style="color:var(--txt3)">${day}</div>
-        <div class="dnome" style="color:var(--txt3)">Descanso ativo</div>
-      </div>
-    </div>`;
+    if(isActive) {
+      h += `<div class="dcard${today?' today':''}" onclick="openTreino('${d.id}')">
+        <div class="dbadge">${d.short}</div>
+        <div class="dinfo">
+          <div class="dday">${d.lbl}</div>
+          <div class="dnome">${t.icone} ${t.nome}</div>
+          <div class="dtags">${tags}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button onclick="event.stopPropagation();openEdit('${d.id}')" style="width:32px;height:32px;border-radius:8px;background:var(--c2);border:1px solid var(--border2);color:var(--txt3);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:14px">✏️</button>
+          <div class="darrow">›</div>
+        </div>
+      </div>`;
+    } else {
+      h += `<div class="dcard rest" style="cursor:pointer;opacity:.4" onclick="toggleDayActive('${d.id}')">
+        <div class="dbadge" style="font-size:9px">${d.short}</div>
+        <div class="dinfo">
+          <div class="dday" style="color:var(--txt3)">${d.lbl}</div>
+          <div class="dnome" style="color:var(--txt3)">Descanso — toque para ativar</div>
+        </div>
+        <div style="color:var(--txt3);font-size:18px">+</div>
+      </div>`;
+    }
   });
   el.innerHTML = h;
+}
+
+function toggleDayActive(dayId) {
+  if(!S.activeDays) S.activeDays = ['seg','ter','qua','qui','sex'];
+  const idx = S.activeDays.indexOf(dayId);
+  if(idx === -1) {
+    S.activeDays.push(dayId);
+    showToast(`${DAYS.find(d=>d.id===dayId)?.lbl} ativado!`);
+  } else {
+    if(S.activeDays.length <= 1) { showToast('Mínimo 1 dia ativo!'); return; }
+    S.activeDays.splice(idx, 1);
+    showToast('Dia desativado.');
+  }
+  save();
+  renderWeek();
 }
 
 // ════════════════════════════════════════════
@@ -1381,27 +1455,27 @@ function renderAddMetaSheet() {
   const tipo = newMetaTipo;
   if(tipo === 'freq_mes') {
     extra = `<div class="ams-field"><label class="ams-label">Quantos dias no mês?</label>
-      <input class="ams-input" id="ams-alvo" type="number" min="1" max="31" placeholder="Ex: 20"></div>`;
+      <input class="ams-input" id="ams-alvo" type="number" min="1" max="31" placeholder="Ex: 20" oninput="autoTitle()"></div>`;
   } else if(tipo === 'corrida_dist' || tipo === 'bike_dist') {
     extra = `<div class="ams-field"><label class="ams-label">Distância alvo (km)</label>
-      <input class="ams-input" id="ams-alvo" type="number" step="0.1" min="0.1" placeholder="Ex: 10"></div>`;
+      <input class="ams-input" id="ams-alvo" type="number" step="0.1" min="0.1" placeholder="Ex: 10" oninput="autoTitle()"></div>`;
   } else if(tipo === 'corrida_acc' || tipo === 'bike_acc') {
     extra = `<div class="ams-row">
       <div class="ams-field"><label class="ams-label">Distância total (km)</label>
-        <input class="ams-input" id="ams-alvo" type="number" min="1" placeholder="Ex: 500"></div>
+        <input class="ams-input" id="ams-alvo" type="number" min="1" placeholder="Ex: 500" oninput="autoTitle()"></div>
       <div class="ams-field"><label class="ams-label">Período</label>
-        <select class="ams-input" id="ams-periodo"><option value="ano">Ano</option><option value="mes">Mês</option></select></div>
+        <select class="ams-input" id="ams-periodo" onchange="autoTitle()"><option value="ano">Ano</option><option value="mes">Mês</option></select></div>
     </div>`;
   } else if(tipo === 'corrida_freq') {
     extra = `<div class="ams-row">
       <div class="ams-field"><label class="ams-label">Vezes</label>
-        <input class="ams-input" id="ams-alvo" type="number" min="1" placeholder="Ex: 3"></div>
+        <input class="ams-input" id="ams-alvo" type="number" min="1" placeholder="Ex: 3" oninput="autoTitle()"></div>
       <div class="ams-field"><label class="ams-label">Período</label>
-        <select class="ams-input" id="ams-periodo"><option value="semana">Semana</option><option value="mes">Mês</option></select></div>
+        <select class="ams-input" id="ams-periodo" onchange="autoTitle()"><option value="semana">Semana</option><option value="mes">Mês</option></select></div>
     </div>`;
   } else if(tipo === 'livre') {
     extra = `<div class="ams-field"><label class="ams-label">Meta numérica (alvo)</label>
-      <input class="ams-input" id="ams-alvo" type="number" min="1" placeholder="Ex: 100"></div>`;
+      <input class="ams-input" id="ams-alvo" type="number" min="1" placeholder="Ex: 100" oninput="autoTitle()"></div>`;
   }
   extraEl.innerHTML = extra;
 }
@@ -1409,10 +1483,28 @@ function renderAddMetaSheet() {
 function selectMetaTipo(id) {
   newMetaTipo = id;
   renderAddMetaSheet();
-  // pre-fill title suggestion
-  const tipoInfo = META_TYPES.find(t => t.id === id);
+  // Always reset and auto-generate title when type changes
+  autoTitle();
+}
+
+function autoTitle() {
+  const tipo = newMetaTipo;
+  const alvoEl = document.getElementById('ams-alvo');
+  const periodoEl = document.getElementById('ams-periodo');
   const tituloEl = document.getElementById('ams-titulo');
-  if(tituloEl && !tituloEl.value) tituloEl.value = tipoInfo ? tipoInfo.desc.replace('X','').trim() : '';
+  if(!tituloEl) return;
+  const val = alvoEl ? alvoEl.value : '';
+  const periodo = periodoEl ? periodoEl.value : '';
+  const n = val || 'X';
+  let titulo = '';
+  if(tipo === 'freq_mes')       titulo = `Treinar ${n} dias no mês`;
+  else if(tipo === 'corrida_dist') titulo = `Correr ${n}km sem parar`;
+  else if(tipo === 'bike_dist')    titulo = `Pedalar ${n}km de uma vez`;
+  else if(tipo === 'corrida_acc')  titulo = `Somar ${n}km de corrida no ${periodo||'ano'}`;
+  else if(tipo === 'bike_acc')     titulo = `Somar ${n}km de bike no ${periodo||'ano'}`;
+  else if(tipo === 'corrida_freq') titulo = `Correr ${n}x na ${periodo||'semana'}`;
+  else if(tipo === 'livre')        titulo = `Meta: atingir ${n}`;
+  tituloEl.value = titulo;
 }
 
 function saveMeta() {
@@ -1826,9 +1918,14 @@ function renderEdit(dayId) {
 
   // day selector
   let sel = '<div class="edit-day-selector">';
+  const activeDays = getActiveDays();
   DAYS.forEach(d => {
-    sel += `<button class="eds${d.id===dayId?' on':''}" onclick="renderEdit('${d.id}')">${d.short}</button>`;
+    const isActive = activeDays.includes(d.id);
+    sel += `<button class="eds${d.id===dayId?' on':''}" onclick="renderEdit('${d.id}')" style="${!isActive?'opacity:.5':''}">
+      ${d.short}${isActive?'':'*'}
+    </button>`;
   });
+  sel += `<div style="font-size:10px;color:var(--txt3);padding:6px 0">*Dia inativo — edite e ative na Semana</div>`;
   sel += '</div>';
 
   // header edit
@@ -2173,6 +2270,200 @@ function deleteShape(realIdx) {
   renderShapeView(`<div class="prog-tabs" style="margin-bottom:16px"><button class="ptab" onclick="switchDashTab('stats')">📊 Progresso</button><button class="ptab on" onclick="switchDashTab('shape')">📸 Shape & Peso</button></div>`);
 }
 
+
+// ════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════
+let _loginMode = 'signin'; // 'signin' | 'signup'
+
+function toggleLoginMode() {
+  _loginMode = _loginMode === 'signin' ? 'signup' : 'signin';
+  const isSignup = _loginMode === 'signup';
+  document.getElementById('login-title').textContent = isSignup ? 'Criar conta' : 'Entrar';
+  document.getElementById('login-desc').textContent = isSignup
+    ? 'Crie sua conta para salvar seus dados na nuvem.'
+    : 'Seus dados ficam salvos na nuvem e sincronizados em qualquer dispositivo.';
+  document.getElementById('login-btn').textContent = isSignup ? 'Criar conta' : 'Entrar';
+  document.getElementById('login-confirm-field').style.display = isSignup ? 'block' : 'none';
+  document.getElementById('login-pass-field').querySelector('input').autocomplete = isSignup ? 'new-password' : 'current-password';
+  document.getElementById('login-toggle').innerHTML = isSignup
+    ? 'Já tem conta? <a onclick="toggleLoginMode()">Entrar</a>'
+    : 'Não tem conta? <a onclick="toggleLoginMode()">Criar conta</a>';
+  clearLoginErrors();
+}
+
+function clearLoginErrors() {
+  document.getElementById('login-error').classList.remove('show');
+  document.getElementById('login-success').classList.remove('show');
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function showLoginSuccess(msg) {
+  const el = document.getElementById('login-success');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+async function doLogin() {
+  clearLoginErrors();
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const confirm = document.getElementById('login-confirm')?.value;
+  const btn = document.getElementById('login-btn');
+
+  if(!email || !pass) { showLoginError('Preenche email e senha!'); return; }
+  if(_loginMode === 'signup' && pass !== confirm) { showLoginError('As senhas não coincidem!'); return; }
+  if(pass.length < 6) { showLoginError('Senha deve ter pelo menos 6 caracteres!'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="login-spinner"></span>' + (_loginMode === 'signup' ? 'Criando...' : 'Entrando...');
+
+  try {
+    const endpoint = _loginMode === 'signup' ? '/auth/v1/signup' : '/auth/v1/token?grant_type=password';
+    const r = await fetch(SB_URL + endpoint, {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass })
+    });
+    const data = await r.json();
+
+    if(!r.ok) {
+      const msg = data.error_description || data.msg || data.message || 'Erro ao autenticar';
+      showLoginError(translateAuthError(msg));
+      btn.disabled = false;
+      btn.textContent = _loginMode === 'signup' ? 'Criar conta' : 'Entrar';
+      return;
+    }
+
+    if(_loginMode === 'signup' && !data.access_token) {
+      showLoginSuccess('Conta criada! Verifique seu email para confirmar antes de entrar.');
+      btn.disabled = false;
+      btn.textContent = 'Criar conta';
+      return;
+    }
+
+    // Success — store session
+    _currentUser = data.user;
+    _authToken = data.access_token;
+    localStorage.setItem('fgym_session', JSON.stringify({ user: data.user, token: data.access_token, refresh: data.refresh_token, expires: Date.now() + (data.expires_in * 1000) }));
+
+    document.getElementById('login-screen').classList.add('hidden');
+    await loadAndStart();
+  } catch(e) {
+    showLoginError('Erro de conexão. Tente novamente.');
+    btn.disabled = false;
+    btn.textContent = _loginMode === 'signup' ? 'Criar conta' : 'Entrar';
+  }
+}
+
+function translateAuthError(msg) {
+  if(msg.includes('Invalid login')) return 'Email ou senha incorretos.';
+  if(msg.includes('Email not confirmed')) return 'Confirme seu email antes de entrar.';
+  if(msg.includes('already registered')) return 'Este email já está cadastrado. Faça login.';
+  if(msg.includes('weak password')) return 'Senha muito fraca. Use pelo menos 6 caracteres.';
+  return msg;
+}
+
+async function refreshSession(refreshToken) {
+  try {
+    const r = await fetch(SB_URL + '/auth/v1/token?grant_type=refresh_token', {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: refreshToken })
+    });
+    if(!r.ok) return false;
+    const data = await r.json();
+    _currentUser = data.user;
+    _authToken = data.access_token;
+    localStorage.setItem('fgym_session', JSON.stringify({ user: data.user, token: data.access_token, refresh: data.refresh_token, expires: Date.now() + (data.expires_in * 1000) }));
+    return true;
+  } catch(e) { return false; }
+}
+
+async function checkSavedSession() {
+  try {
+    const raw = localStorage.getItem('fgym_session');
+    if(!raw) return false;
+    const session = JSON.parse(raw);
+    // If token not expired, use it
+    if(session.expires > Date.now() + 60000) {
+      _currentUser = session.user;
+      _authToken = session.token;
+      return true;
+    }
+    // Try to refresh
+    if(session.refresh) {
+      return await refreshSession(session.refresh);
+    }
+    return false;
+  } catch(e) { return false; }
+}
+
+function doLogout() {
+  _currentUser = null;
+  _authToken = null;
+  localStorage.removeItem('fgym_session');
+  localStorage.removeItem('fgym2');
+  S = { history: [], pesos: {}, streak: 0 };
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-pass').value = '';
+  clearLoginErrors();
+}
+
+// add logout button to header
+function addLogoutBtn() {
+  const hstats = document.querySelector('.hstats');
+  if(hstats && !document.getElementById('logout-btn')) {
+    const btn = document.createElement('button');
+    btn.className = 'logout-btn';
+    btn.id = 'logout-btn';
+    btn.innerHTML = '↩ Sair';
+    btn.onclick = doLogout;
+    hstats.appendChild(btn);
+  }
+}
+
+async function loadAndStart() {
+  const lsEl = document.getElementById('ls-msg');
+  if(lsEl) lsEl.textContent = 'Sincronizando dados...';
+  document.getElementById('loading-screen').classList.remove('hidden');
+
+  const cloudData = await Promise.race([
+    sbGet(),
+    new Promise(res => setTimeout(() => res(null), 6000))
+  ]);
+
+  if(cloudData) {
+    const localUpdated = S._updatedAt || 0;
+    const cloudUpdated = cloudData._updatedAt || 1;
+    if(cloudUpdated >= localUpdated) {
+      S = cloudData;
+      if(!S.history) S.history = [];
+      if(!S.pesos)   S.pesos   = {};
+      if(!S.streak)  S.streak  = 0;
+      try { localStorage.setItem('fgym2', JSON.stringify(S)); } catch{}
+    }
+  }
+
+  document.getElementById('loading-screen').classList.add('hidden');
+  addLogoutBtn();
+  applyCustomTreinos();
+  renderWeek();
+  updateHeader();
+}
+
+// handle Enter key on login form
+document.addEventListener('keydown', e => {
+  if(e.key === 'Enter' && !document.getElementById('login-screen').classList.contains('hidden')) {
+    doLogin();
+  }
+});
+
 // ════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════
@@ -2184,37 +2475,16 @@ document.addEventListener('DOMContentLoaded', async function() {
   document.getElementById('nb-metas').addEventListener('click', () => nav('metas'));
   document.getElementById('nb-hist').addEventListener('click', () => nav('hist'));
 
-  // Try to load from Supabase
-  const lsMsg = document.getElementById('ls-msg');
-  try {
-    if(lsMsg) lsMsg.textContent = 'Sincronizando com a nuvem...';
-    const cloudData = await Promise.race([
-      sbGet(),
-      new Promise(res => setTimeout(() => res(null), 5000)) // 5s timeout
-    ]);
-    if(cloudData) {
-      // merge: cloud wins, but keep local if cloud is older
-      const localUpdated = S._updatedAt || 0;
-      const cloudUpdated = cloudData._updatedAt || 1;
-      if(cloudUpdated >= localUpdated) {
-        S = cloudData;
-        if(!S.history) S.history = [];
-        if(!S.pesos)   S.pesos   = {};
-        if(!S.streak)  S.streak  = 0;
-        try { localStorage.setItem('fgym2', JSON.stringify(S)); } catch{}
-      }
-    }
-  } catch(e) {
-    console.log('Cloud load failed, using local data');
+  // Check for saved session
+  const hasSession = await checkSavedSession();
+  if(hasSession) {
+    document.getElementById('login-screen').classList.add('hidden');
+    await loadAndStart();
+  } else {
+    // Show login, hide loading
+    document.getElementById('loading-screen').classList.add('hidden');
+    // Bind Enter on inputs
   }
-
-  // stamp updated time on every save
-  const _origSave = save;
-
-  document.getElementById('loading-screen').classList.add('hidden');
-  applyCustomTreinos();
-  renderWeek();
-  updateHeader();
 });
 </script>
 
@@ -2242,7 +2512,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     <button class="ash-cancel" onclick="closeAddShape()">Cancelar</button>
   </div>
 </div>
-<input type="file" id="ash-file-input" accept="image/*" style="display:none" onchange="onShapePhoto(this)">
+<input type="file" id="ash-file-input" accept="image/*" multiple style="display:none" onchange="onShapePhoto(this)">
 <!-- PHOTO VIEWER -->
 <div id="photo-viewer">
   <img id="photo-viewer-img" src="">
@@ -2274,5 +2544,34 @@ document.addEventListener('DOMContentLoaded', async function() {
   <div class="ls-sub" id="ls-msg">Carregando seus dados...</div>
 </div>
 <div class="sync-toast" id="sync-toast"><div class="sync-dot" id="sync-dot"></div><span id="sync-msg"></span></div>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-logo">🔥 FORJA GYM</div>
+  <div class="login-sub">Forge your destiny</div>
+  <div class="login-card">
+    <div class="login-title" id="login-title">Entrar</div>
+    <div class="login-desc" id="login-desc">Seus dados ficam salvos na nuvem e sincronizados em qualquer dispositivo.</div>
+    <div class="login-error" id="login-error"></div>
+    <div class="login-success" id="login-success"></div>
+    <div class="login-field">
+      <label class="login-label">Email</label>
+      <input class="login-input" id="login-email" type="email" placeholder="seu@email.com" autocomplete="email">
+    </div>
+    <div class="login-field" id="login-pass-field">
+      <label class="login-label">Senha</label>
+      <input class="login-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <div class="login-field" id="login-confirm-field" style="display:none">
+      <label class="login-label">Confirmar Senha</label>
+      <input class="login-input" id="login-confirm" type="password" placeholder="••••••••" autocomplete="new-password">
+    </div>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Entrar</button>
+    <div class="login-toggle" id="login-toggle">
+      Não tem conta? <a onclick="toggleLoginMode()">Criar conta</a>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
