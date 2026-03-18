@@ -3,12 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="FORJA GYM">
-<link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#e63946">
 <title>FORJA GYM</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -190,12 +186,13 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 .hm-dow{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px}
 .hm-dl{font-size:9px;font-weight:700;color:var(--txt3);text-align:center;letter-spacing:.5px}
 .hm-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.hm-cell{aspect-ratio:1;border-radius:4px;background:var(--c3)}
-.hm-cell.t1{background:rgba(230,57,70,.25)}
-.hm-cell.t2{background:rgba(230,57,70,.55)}
-.hm-cell.t3{background:var(--red)}
+.hm-cell{aspect-ratio:1;border-radius:4px;background:var(--c3);display:flex;align-items:center;justify-content:center;position:relative;font-size:10px;font-weight:800;color:transparent}
+.hm-cell.trained{background:rgba(230,57,70,.12);color:var(--red)}
+.hm-cell.trained::after{content:'✕';position:absolute;font-size:11px;font-weight:900;color:var(--red);line-height:1}
 .hm-cell.today{outline:2px solid var(--red);outline-offset:2px}
-.hm-cell.future{background:var(--c2);opacity:.5}
+.hm-cell.today-trained{outline:2px solid var(--red);outline-offset:2px;background:rgba(230,57,70,.12)}
+.hm-cell.today-trained::after{content:'✕';position:absolute;font-size:11px;font-weight:900;color:var(--red);line-height:1}
+.hm-cell.future{background:var(--c2);opacity:.4}
 
 /* PROG LIST */
 .prow{background:var(--c1);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
@@ -395,38 +392,37 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 .goal-complete-toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--gn);color:#fff;border-radius:14px;padding:12px 20px;font-size:14px;font-weight:700;z-index:999;opacity:0;transition:all .4s;pointer-events:none;white-space:nowrap;text-align:center}
 .goal-complete-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ── PROGRESSO TABS ── */
+/* ── SHAPE & PESO ── */
 .prog-tabs{display:flex;background:var(--c2);border-radius:12px;padding:3px;margin-bottom:18px;gap:3px}
 .ptab{flex:1;padding:9px;border-radius:9px;font-size:12px;font-weight:700;font-family:var(--font);cursor:pointer;border:none;background:transparent;color:var(--txt3);transition:all .2s;text-align:center}
 .ptab.on{background:var(--c1);color:var(--txt);box-shadow:0 1px 4px rgba(0,0,0,.4)}
-
-/* ── SHAPE VIEW ── */
-.shape-hero{position:relative;border-radius:18px;overflow:hidden;margin-bottom:16px;background:var(--c1);border:1px solid var(--border)}
-.shape-hero-empty{padding:32px 20px;text-align:center}
-.shape-hero-empty h3{font-family:var(--bb);font-size:22px;letter-spacing:1px;color:var(--txt2);margin-bottom:6px}
-.shape-hero-empty p{font-size:13px;color:var(--txt3);line-height:1.6}
+.add-shape-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border-radius:14px;background:var(--red);color:#fff;font-size:14px;font-weight:700;font-family:var(--font);border:none;cursor:pointer;margin-bottom:16px;transition:background .15s}
+.add-shape-btn:active{background:var(--rdark)}
 .shape-compare{display:grid;grid-template-columns:1fr 1fr;gap:2px;border-radius:18px;overflow:hidden;margin-bottom:16px}
-.sc-item{position:relative;background:var(--c3);aspect-ratio:.75;overflow:hidden}
+.sc-item{position:relative;background:var(--c3);aspect-ratio:.75;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .sc-img{width:100%;height:100%;object-fit:cover;display:block}
 .sc-label{position:absolute;bottom:0;left:0;right:0;padding:8px 10px;background:linear-gradient(transparent,rgba(0,0,0,.85));display:flex;justify-content:space-between;align-items:flex-end}
 .sc-date{font-size:11px;font-weight:700;color:#fff;opacity:.9}
 .sc-peso{font-family:var(--bb);font-size:18px;color:#fff;line-height:1}
 .sc-peso span{font-size:11px;font-weight:600;opacity:.7}
-.add-shape-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border-radius:14px;background:var(--red);color:#fff;font-size:14px;font-weight:700;font-family:var(--font);border:none;cursor:pointer;margin-bottom:16px;transition:background .15s;letter-spacing:.3px}
-.add-shape-btn:active{background:var(--rdark);transform:scale(.98)}
-
-/* timeline */
+.peso-trend{background:var(--c1);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:16px}
+.pt-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+.pt-title{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--txt3);text-transform:uppercase}
+.pt-chart{display:flex;align-items:flex-end;gap:4px;height:60px}
+.pt-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.pt-bar{width:100%;border-radius:4px 4px 0 0;background:var(--red);min-height:4px}
+.pt-blabel{font-size:9px;color:var(--txt3);font-weight:600;text-align:center}
 .shape-timeline{display:flex;flex-direction:column;gap:0}
 .st-item{display:flex;gap:14px;padding-bottom:16px;position:relative}
 .st-item:not(:last-child)::after{content:'';position:absolute;left:19px;top:44px;bottom:0;width:1px;background:var(--border)}
 .st-dot{width:38px;height:38px;border-radius:10px;background:var(--c2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;font-weight:800;color:var(--txt2);z-index:1}
 .st-dot.first{background:rgba(230,57,70,.1);border-color:rgba(230,57,70,.3);color:var(--red)}
-.st-content{flex:1;min-width:0}
-.st-card{background:var(--c1);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.st-card{background:var(--c1);border:1px solid var(--border);border-radius:14px;overflow:hidden;flex:1}
 .st-card-top{display:flex;gap:12px;padding:12px}
-.st-thumb{width:72px;height:96px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--c3)}
-.st-thumb-empty{width:72px;height:96px;border-radius:10px;background:var(--c2);border:1px dashed var(--border2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.st-info{flex:1;display:flex;flex-direction:column;justify-content:space-between;min-width:0}
+.st-thumb-row{display:flex;gap:6px;padding:0 12px 12px;flex-wrap:wrap}
+.st-thumb{width:72px;height:96px;border-radius:8px;object-fit:cover;cursor:pointer;flex-shrink:0;background:var(--c3)}
+.st-thumb-empty{width:72px;height:96px;border-radius:8px;background:var(--c2);border:1px dashed var(--border2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.st-info{flex:1;display:flex;flex-direction:column;justify-content:space-between}
 .st-date{font-size:11px;font-weight:700;color:var(--txt3);letter-spacing:.5px;text-transform:uppercase}
 .st-peso-big{font-family:var(--bb);font-size:36px;line-height:1;color:var(--txt);margin:4px 0}
 .st-peso-unit{font-size:14px;color:var(--txt3);font-weight:600}
@@ -435,39 +431,42 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 .st-diff.neg{color:var(--gn);background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)}
 .st-diff.zero{color:var(--txt3);background:var(--c2);border:1px solid var(--border)}
 .st-obs{font-size:12px;color:var(--txt3);padding:0 12px 10px;font-style:italic;line-height:1.5}
-.st-actions{border-top:1px solid var(--border);padding:8px 12px;display:flex;justify-content:flex-end;gap:6px}
+.st-actions{border-top:1px solid var(--border);padding:8px 12px;display:flex;justify-content:flex-end}
 .st-del{font-size:11px;font-weight:700;color:var(--txt3);background:none;border:none;cursor:pointer;font-family:var(--font);padding:4px 8px;border-radius:6px}
-.st-del:active{background:var(--c2)}
-
-/* peso trend mini chart */
-.peso-trend{background:var(--c1);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:16px}
-.pt-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
-.pt-title{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--txt3);text-transform:uppercase}
-.pt-current{font-family:var(--bb);font-size:28px;color:var(--txt)}
-.pt-chart{display:flex;align-items:flex-end;gap:4px;height:60px}
-.pt-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
-.pt-bar{width:100%;border-radius:4px 4px 0 0;background:var(--red);min-height:4px;transition:height .4s}
-.pt-blabel{font-size:9px;color:var(--txt3);font-weight:600;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-
-/* add shape sheet */
 #add-shape-ov{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:flex-end;justify-content:center;z-index:600;backdrop-filter:blur(8px);padding-bottom:env(safe-area-inset-bottom)}
 #add-shape-ov.show{display:flex}
 .add-shape-sheet{background:var(--c1);border:1px solid var(--border2);border-radius:24px 24px 0 0;padding:24px 20px 32px;width:100%;max-width:480px;animation:slideUp .2s ease;max-height:88vh;overflow-y:auto}
 .ash-title{font-family:var(--bb);font-size:22px;letter-spacing:1px;margin-bottom:18px}
-.ash-photo-area{width:100%;aspect-ratio:1;border-radius:16px;background:var(--c2);border:2px dashed var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;margin-bottom:16px;overflow:hidden;position:relative;transition:border-color .2s}
-.ash-photo-area:active{border-color:var(--red)}
-.ash-photo-area img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
-.ash-photo-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;z-index:1}
-.ash-photo-icon{font-size:40px}
-.ash-photo-txt{font-size:13px;color:var(--txt3);font-weight:600}
 .ash-field{margin-bottom:14px}
 .ash-label{font-size:11px;font-weight:700;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;display:block}
-.ash-input{width:100%;background:var(--c2);border:1px solid var(--border2);border-radius:10px;color:var(--txt);font-size:22px;font-weight:800;font-family:var(--font);padding:11px 14px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.ash-input{width:100%;background:var(--c2);border:1px solid var(--border2);border-radius:10px;color:var(--txt);font-size:15px;font-weight:600;font-family:var(--font);padding:11px 14px;outline:none;transition:border-color .2s;-webkit-appearance:none}
 .ash-input:focus{border-color:var(--red)}
-.ash-input.sm{font-size:15px;font-weight:600}
-.ash-save{width:100%;padding:14px;border-radius:12px;background:var(--red);color:#fff;font-size:15px;font-weight:700;font-family:var(--font);border:none;cursor:pointer;margin-top:4px;letter-spacing:.3px}
+.ash-photos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.ash-photo-slot{aspect-ratio:.75;border-radius:10px;background:var(--c2);border:1px dashed var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;transition:border-color .2s}
+.ash-photo-slot:active{border-color:var(--red)}
+.ash-photo-slot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.ash-photo-slot .ash-add-icon{font-size:22px;opacity:.4;z-index:1}
+.ash-photo-slot .ash-rm{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;z-index:2;cursor:pointer;border:none}
+.ash-save{width:100%;padding:14px;border-radius:12px;background:var(--red);color:#fff;font-size:15px;font-weight:700;font-family:var(--font);border:none;cursor:pointer;margin-top:4px}
 .ash-save:active{background:var(--rdark)}
 .ash-cancel{width:100%;padding:12px;border-radius:12px;background:transparent;border:1px solid var(--border2);color:var(--txt3);font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;margin-top:8px}
+/* fullscreen photo viewer */
+#photo-viewer{position:fixed;inset:0;background:#000;display:none;align-items:center;justify-content:center;z-index:700}
+#photo-viewer.show{display:flex}
+#photo-viewer img{max-width:100%;max-height:100%;object-fit:contain}
+#photo-viewer-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
+
+/* ── LOADING / SYNC ── */
+#loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:16px}
+#loading-screen.hidden{display:none}
+.ls-logo{font-family:var(--bb);font-size:28px;letter-spacing:4px;color:var(--red)}
+.ls-sub{font-size:13px;color:var(--txt3);letter-spacing:1px}
+.ls-spinner{width:32px;height:32px;border:2px solid var(--c3);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sync-toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:var(--c2);border:1px solid var(--border2);border-radius:10px;padding:8px 16px;font-size:12px;font-weight:600;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.sync-toast.show{opacity:1}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--gn);flex-shrink:0}
+.sync-dot.err{background:var(--red)}
 </style>
 </head>
 <body>
@@ -493,8 +492,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
     <div id="v-edit" class="view"></div>
     <!-- METAS -->
     <div id="v-metas" class="view"></div>
-    <!-- SHAPE -->
-    <div id="v-shape" class="view"></div>
   </div>
 
   <div id="navbar">
@@ -622,6 +619,51 @@ const DAYS = [
 const TODAY_IDX = 1; // Terça 17/03/2026
 
 // ════════════════════════════════════════════
+// SUPABASE CONFIG
+// ════════════════════════════════════════════
+const SB_URL = 'https://beengflbvycyhdvkwjsi.supabase.co';
+const SB_KEY = 'sb_publishable_SjziwG_p44uY0r6FXhHwug_Nl6VEQup';
+const SB_USER = 'adrianlucastdk'; // identificador único do usuário
+
+async function sbGet() {
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/forja_data?user_id=eq.${SB_USER}&select=data`, {
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+    });
+    if(!r.ok) return null;
+    const rows = await r.json();
+    return rows.length ? rows[0].data : null;
+  } catch(e) { return null; }
+}
+
+async function sbSave(data) {
+  try {
+    await fetch(`${SB_URL}/rest/v1/forja_data`, {
+      method: 'POST',
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + SB_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates'
+      },
+      body: JSON.stringify({ user_id: SB_USER, data: data, updated_at: new Date().toISOString() })
+    });
+    return true;
+  } catch(e) { return false; }
+}
+
+function showSyncToast(msg, ok=true) {
+  const t = document.getElementById('sync-toast');
+  const d = document.getElementById('sync-dot');
+  const m = document.getElementById('sync-msg');
+  if(!t) return;
+  m.textContent = msg;
+  d.className = 'sync-dot' + (ok ? '' : ' err');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════
 let S = {};
@@ -631,7 +673,12 @@ if(!S.pesos)   S.pesos   = {};
 if(!S.streak)  S.streak  = 0;
 
 function save() {
+  S._updatedAt = Date.now();
   try { localStorage.setItem('fgym2', JSON.stringify(S)); } catch{}
+  sbSave(S).then(ok => {
+    if(ok) showSyncToast('✓ Salvo na nuvem');
+    else showSyncToast('Sem conexão — salvo localmente', false);
+  });
 }
 
 // session state
@@ -662,7 +709,7 @@ function _doNav(v) {
   document.getElementById('v-' + v).classList.add('on');
   const nbEl = document.getElementById('nb-' + v);
   if(nbEl) nbEl.classList.add('on');
-  if(v==='dash') renderDash();
+  if(v==='dash') { window._dashTab = window._dashTab||'stats'; renderDash(); }
   if(v==='hist') renderHist();
   if(v==='edit') renderEdit(editDayId||'seg');
   if(v==='metas') renderMetas();
@@ -861,12 +908,10 @@ function buildSeriesRows(ex) {
       <span class="sn${isDone?' done-sn':''}">${isDone?'✓':s+1}</span>
       <input class="sinput" type="number" step="0.5" min="0"
         value="${pesos[s] ?? ''}" placeholder="${pesos[s] ?? '—'}"
-        oninput="onPeso('${ex.id}',${s},this.value)"
-        ${isDone?'disabled':''}>
+        oninput="onPeso('${ex.id}',${s},this.value)">
       <input class="sinput" type="number" min="1"
         value="${reps[s] || ''}" placeholder="${ex.reps}"
-        oninput="onReps('${ex.id}',${s},this.value)"
-        ${isDone?'disabled':''}>
+        oninput="onReps('${ex.id}',${s},this.value)">
       <input class="sinput ant" type="text" readonly
         value="${ant[s] != null ? ant[s]+'kg' : '—'}">
       <button class="check-btn${isDone?' done':isNext&&workoutStarted?' current':''}" 
@@ -1375,207 +1420,6 @@ function saveMeta() {
   renderMetas();
 }
 
-
-// ════════════════════════════════════════════
-// SHAPE & PESO
-// ════════════════════════════════════════════
-window._dashTab = 'stats';
-let _shapePhotoB64 = null;
-
-function switchDashTab(tab) {
-  window._dashTab = tab;
-  renderDash();
-}
-
-function getShapes() {
-  if(!S.shapes) S.shapes = [];
-  return S.shapes;
-}
-
-function renderShapeView() {
-  const shapes = getShapes();
-  const sorted = [...shapes].sort((a,b) => b.ts - a.ts); // newest first
-
-  let h = `<div class="prog-tabs">
-    <button class="ptab" onclick="switchDashTab('stats')">📊 Progresso</button>
-    <button class="ptab on" onclick="switchDashTab('shape')">📸 Shape & Peso</button>
-  </div>`;
-
-  h += `<button class="add-shape-btn" onclick="openAddShape()">📷 Registrar Peso & Foto</button>`;
-
-  if(!shapes.length) {
-    h += `<div class="shape-hero">
-      <div class="shape-hero-empty">
-        <h3>SEM REGISTROS</h3>
-        <p>Adicione seu primeiro registro de peso e foto do shape para acompanhar sua evolução ao longo do tempo.</p>
-      </div>
-    </div>`;
-  } else {
-    // COMPARATIVO — 2 mais recentes lado a lado
-    if(sorted.length >= 2) {
-      const [newest, prev] = sorted;
-      h += `<div class="slabel" style="margin-bottom:8px">Comparativo</div>
-      <div class="shape-compare">
-        <div class="sc-item">
-          ${prev.foto ? `<img class="sc-img" src="${prev.foto}">` : '<div style="width:100%;height:100%;background:var(--c3);display:flex;align-items:center;justify-content:center;font-size:32px">📷</div>'}
-          <div class="sc-label">
-            <span class="sc-date">${prev.dateStr}</span>
-            <span class="sc-peso">${prev.peso}<span>kg</span></span>
-          </div>
-        </div>
-        <div class="sc-item">
-          ${newest.foto ? `<img class="sc-img" src="${newest.foto}">` : '<div style="width:100%;height:100%;background:var(--c3);display:flex;align-items:center;justify-content:center;font-size:32px">📷</div>'}
-          <div class="sc-label">
-            <span class="sc-date">${newest.dateStr}</span>
-            <span class="sc-peso">${newest.peso}<span>kg</span></span>
-          </div>
-        </div>
-      </div>`;
-    }
-
-    // PESO TREND CHART
-    const withPeso = [...shapes].sort((a,b) => a.ts - b.ts).filter(s => s.peso);
-    if(withPeso.length >= 2) {
-      const pesos = withPeso.map(s => parseFloat(s.peso));
-      const minP = Math.min(...pesos);
-      const maxP = Math.max(...pesos);
-      const range = maxP - minP || 1;
-      const last = pesos[pesos.length-1];
-      const first = pesos[0];
-      const totalDiff = +(last - first).toFixed(1);
-      const diffTxt = totalDiff > 0 ? `+${totalDiff}kg` : `${totalDiff}kg`;
-      const diffColor = totalDiff > 0 ? 'var(--red)' : 'var(--gn)';
-      h += `<div class="peso-trend">
-        <div class="pt-header">
-          <span class="pt-title">Evolução do Peso</span>
-          <span style="font-size:13px;font-weight:700;color:${diffColor}">${diffTxt} total</span>
-        </div>
-        <div class="pt-chart">
-          ${withPeso.slice(-8).map(s => {
-            const p = parseFloat(s.peso);
-            const pct = Math.round(20 + ((p - minP) / range) * 80);
-            const isLast = s === withPeso[withPeso.length-1];
-            return `<div class="pt-bar-wrap">
-              <div class="pt-bar" style="height:${pct}%;background:${isLast?'var(--red)':'var(--c4)'}"></div>
-              <div class="pt-blabel">${s.dateStr.split(' ')[0]}</div>
-            </div>`;
-          }).join('')}
-        </div>
-      </div>`;
-    }
-
-    // TIMELINE
-    h += `<div class="slabel">Histórico</div>
-    <div class="shape-timeline">`;
-    sorted.forEach((entry, i) => {
-      const prev = sorted[i+1];
-      const diff = prev && entry.peso && prev.peso ? +(parseFloat(entry.peso) - parseFloat(prev.peso)).toFixed(1) : null;
-      let diffHtml = '';
-      if(diff !== null) {
-        const cls = diff > 0 ? 'pos' : diff < 0 ? 'neg' : 'zero';
-        const sign = diff > 0 ? '+' : '';
-        const label = diff < 0 ? `${sign}${diff}kg ↓` : diff > 0 ? `${sign}${diff}kg ↑` : '= manteve';
-        diffHtml = `<span class="st-diff ${cls}">${label}</span>`;
-      }
-      h += `<div class="st-item">
-        <div class="st-dot${i===0?' first':''}">${i===0?'★':(sorted.length-i)}</div>
-        <div class="st-content">
-          <div class="st-card">
-            <div class="st-card-top">
-              ${entry.foto
-                ? `<img class="st-thumb" src="${entry.foto}" loading="lazy">`
-                : `<div class="st-thumb-empty">📷</div>`}
-              <div class="st-info">
-                <div class="st-date">${entry.dateStr}</div>
-                <div class="st-peso-big">${entry.peso||'—'}<span class="st-peso-unit">kg</span></div>
-                ${diffHtml}
-              </div>
-            </div>
-            ${entry.obs ? `<div class="st-obs">"${entry.obs}"</div>` : ''}
-            <div class="st-actions">
-              <button class="st-del" onclick="deleteShape(${i})">🗑 Apagar</button>
-            </div>
-          </div>
-        </div>
-      </div>`;
-    });
-    h += '</div>';
-  }
-
-  document.getElementById('v-dash').innerHTML = h;
-}
-
-function openAddShape() {
-  _shapePhotoB64 = null;
-  document.getElementById('ash-placeholder').style.display = 'flex';
-  const existing = document.getElementById('ash-photo-area').querySelector('img');
-  if(existing) existing.remove();
-  document.getElementById('ash-peso').value = '';
-  document.getElementById('ash-obs').value = '';
-  document.getElementById('add-shape-ov').classList.add('show');
-}
-
-function closeAddShape() {
-  document.getElementById('add-shape-ov').classList.remove('show');
-}
-
-function onShapePhoto(input) {
-  const file = input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    // resize to max 800px to save space
-    const img = new window.Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const MAX = 800;
-      let w = img.width, h = img.height;
-      if(w > h) { if(w > MAX) { h = Math.round(h*MAX/w); w = MAX; } }
-      else { if(h > MAX) { w = Math.round(w*MAX/h); h = MAX; } }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      _shapePhotoB64 = canvas.toDataURL('image/jpeg', 0.75);
-      // preview
-      let preview = document.getElementById('ash-photo-area').querySelector('img');
-      if(!preview) {
-        preview = document.createElement('img');
-        preview.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:14px';
-        document.getElementById('ash-photo-area').appendChild(preview);
-      }
-      preview.src = _shapePhotoB64;
-      document.getElementById('ash-placeholder').style.display = 'none';
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-function saveShape() {
-  const peso = document.getElementById('ash-peso').value;
-  const obs = document.getElementById('ash-obs').value.trim();
-  if(!peso && !_shapePhotoB64) { showToast('Adiciona pelo menos o peso ou uma foto!'); return; }
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('pt-BR', {day:'2-digit', month:'short', year:'2-digit'});
-  if(!S.shapes) S.shapes = [];
-  S.shapes.push({ ts: now.getTime(), dateStr, peso: peso ? parseFloat(peso) : null, foto: _shapePhotoB64, obs });
-  save();
-  closeAddShape();
-  showToast('📸 Registro salvo!');
-  renderShapeView();
-}
-
-function deleteShape(dispIdx) {
-  if(!confirm('Apagar este registro? A foto também será removida.')) return;
-  const shapes = getShapes();
-  const sorted = [...shapes].sort((a,b) => b.ts - a.ts);
-  const entry = sorted[dispIdx];
-  const realIdx = shapes.findIndex(s => s.ts === entry.ts);
-  if(realIdx !== -1) shapes.splice(realIdx, 1);
-  save();
-  showToast('Registro apagado');
-  renderShapeView();
-}
-
 // ════════════════════════════════════════════
 // TIMER
 // ════════════════════════════════════════════
@@ -1659,22 +1503,19 @@ function vibrate() {
 // DASHBOARD
 // ════════════════════════════════════════════
 function renderDash() {
-  const dashTab = window._dashTab || 'stats';
-  if(dashTab === 'shape') { renderShapeView(); return; }
+  if((window._dashTab||'stats') === 'shape') {
+    const tabHtml = `<div class="prog-tabs"><button class="ptab" onclick="switchDashTab('stats')">📊 Progresso</button><button class="ptab on" onclick="switchDashTab('shape')">📸 Shape & Peso</button></div>`;
+    renderShapeView(tabHtml);
+    return;
+  }
   const hist = S.history || [];
   const xpTotal = hist.reduce((a,h) => a + (h.xp||0), 0);
-  const mesHist = hist.filter(h => h.date && h.date.toLowerCase().includes(_mesShort.toLowerCase()));
+  const mesHist = hist.filter(h => h.date && h.date.includes('mar'));
   const avgDur = mesHist.length ? Math.round(mesHist.reduce((a,h)=>a+(h.dur||0),0)/mesHist.length) : 0;
 
-  const _now = new Date();
-  const _mesLabel = _now.toLocaleDateString('pt-BR',{month:'long',year:'numeric'}).replace(/^\w/,s=>s.toUpperCase());
-  const _mesShort = _now.toLocaleDateString('pt-BR',{month:'short'});
-  let h = `<div class="prog-tabs">
-    <button class="ptab on" onclick="switchDashTab('stats')">📊 Progresso</button>
-    <button class="ptab" onclick="switchDashTab('shape')">📸 Shape & Peso</button>
-  </div>
-  <div class="slabel">${_mesLabel}</div>`;
-  h += `<div class="metrics">
+  const tabHtml = `<div class="prog-tabs"><button class="ptab on" onclick="switchDashTab('stats')">📊 Progresso</button><button class="ptab" onclick="switchDashTab('shape')">📸 Shape & Peso</button></div>`;
+  let h = tabHtml + `<div class="slabel">Março 2026</div>
+  <div class="metrics">
     <div class="mcard">
       <div class="mlabel">Treinos no mês</div>
       <div class="mval r">${mesHist.length}</div>
@@ -1698,7 +1539,9 @@ function renderDash() {
   </div>`;
 
   // Heatmap Março 2026 (começa sábado dia 1)
-  h += `<div class="slabel">Frequência — Março</div>
+  const _mesNome = new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  const _mesNomeCap = _mesNome.charAt(0).toUpperCase() + _mesNome.slice(1);
+  h += `<div class="slabel">Frequência — ${_mesNomeCap}</div>
   <div class="heatmap-wrap">
     <div class="hm-dow">
       ${['D','S','T','Q','Q','S','S'].map(d=>`<div class="hm-dl">${d}</div>`).join('')}
@@ -1760,31 +1603,50 @@ function renderDash() {
 
   document.getElementById('v-dash').innerHTML = h;
 
-  // render heatmap — dynamic based on real current date
+  // render heatmap — dynamic
   const grid = document.getElementById('hm-grid');
-  const now = new Date();
-  const curYear = now.getFullYear();
-  const curMonth = now.getMonth(); // 0-indexed
-  const todayNum = now.getDate();
-  const daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
-  const startDow = new Date(curYear, curMonth, 1).getDay(); // 0=Sun
-  const monthShort = now.toLocaleDateString('pt-BR', {month:'short'});
+  const _now = new Date();
+  const _year = _now.getFullYear();
+  const _month = _now.getMonth();
+  const _todayNum = _now.getDate();
+  const _daysInMonth = new Date(_year, _month + 1, 0).getDate();
+  const _startDow = new Date(_year, _month, 1).getDay(); // 0=Sun
+  const _monthShort = _now.toLocaleDateString('pt-BR', {month:'short'}).replace('.','').toLowerCase();
+
+  // collect trained days from history — match by day number and current month/year
   const trainedDays = new Set(
-    (S.history||[])
-      .filter(h => h.date && h.date.toLowerCase().includes(monthShort.toLowerCase()))
-      .map(h => parseInt(h.date))
+    (S.history||[]).filter(h => {
+      if(!h.ts) {
+        // fallback: match by date string containing month short
+        return h.date && h.date.toLowerCase().includes(_monthShort);
+      }
+      const d = new Date(h.ts);
+      return d.getMonth() === _month && d.getFullYear() === _year;
+    }).map(h => {
+      if(h.ts) return new Date(h.ts).getDate();
+      return parseInt(h.date);
+    })
   );
 
-  for(let i = 0; i < 42; i++) {
-    const dayNum = i - startDow + 1;
-    if(dayNum < 1) { const cell = document.createElement('div'); cell.className='hm-cell future'; grid.appendChild(cell); continue; }
-    if(dayNum > daysInMonth) break;
+  for(let i = 0; i < _startDow; i++) {
+    const blank = document.createElement('div');
+    blank.className = 'hm-cell future';
+    grid.appendChild(blank);
+  }
+
+  for(let d = 1; d <= _daysInMonth; d++) {
     const cell = document.createElement('div');
+    const isFuture = d > _todayNum;
+    const isToday = d === _todayNum;
+    const isTrained = trainedDays.has(d);
     let cls = 'hm-cell';
-    if(dayNum > todayNum) cls += ' future';
-    else if(trainedDays.has(dayNum)) cls += ' t3';
-    if(dayNum === todayNum) cls += ' today';
+    if(isFuture) cls += ' future';
+    else if(isTrained && isToday) cls += ' today-trained';
+    else if(isTrained) cls += ' trained';
+    else if(isToday) cls += ' today';
     cell.className = cls;
+    // show day number on today
+    if(isToday) cell.title = 'Hoje';
     grid.appendChild(cell);
   }
 }
@@ -2091,21 +1953,280 @@ function resetDay(dayId) {
   location.reload();
 }
 
+
+// ════════════════════════════════════════════
+// SHAPE & PESO
+// ════════════════════════════════════════════
+window._dashTab = 'stats';
+let _shapePhotos = []; // array of base64 strings for current new entry
+
+function switchDashTab(tab) {
+  window._dashTab = tab;
+  renderDash();
+}
+
+function getShapes() {
+  if(!S.shapes) S.shapes = [];
+  return S.shapes;
+}
+
+function renderShapeView(tabHtml) {
+  const shapes = getShapes();
+  const sorted = [...shapes].sort((a,b) => (b.ts||0) - (a.ts||0));
+  let h = tabHtml;
+  h += `<button class="add-shape-btn" onclick="openAddShape()">📷 Novo Registro de Shape</button>`;
+
+  if(!shapes.length) {
+    h += `<div class="empty-state"><h3>SEM REGISTROS</h3><p>Adicione seu primeiro registro<br>de peso e fotos para acompanhar<br>sua evolução.</p></div>`;
+  } else {
+    // Comparativo dos 2 mais recentes com foto
+    const withFoto = sorted.filter(s => s.fotos && s.fotos.length > 0);
+    if(withFoto.length >= 2) {
+      h += `<div class="slabel">Comparativo</div>
+      <div class="shape-compare">`;
+      [withFoto[1], withFoto[0]].forEach(entry => {
+        h += `<div class="sc-item">
+          <img class="sc-img" src="${entry.fotos[0]}">
+          <div class="sc-label">
+            <span class="sc-date">${entry.dateStr}</span>
+            <span class="sc-peso">${entry.peso||'—'}<span>kg</span></span>
+          </div>
+        </div>`;
+      });
+      h += `</div>`;
+    }
+
+    // Trend chart
+    const withPeso = [...shapes].sort((a,b)=>(a.ts||0)-(b.ts||0)).filter(s=>s.peso);
+    if(withPeso.length >= 2) {
+      const pesos = withPeso.map(s=>parseFloat(s.peso));
+      const minP = Math.min(...pesos), maxP = Math.max(...pesos);
+      const range = maxP - minP || 1;
+      const diff = +(pesos[pesos.length-1] - pesos[0]).toFixed(1);
+      h += `<div class="peso-trend">
+        <div class="pt-header">
+          <span class="pt-title">Evolução do Peso</span>
+          <span style="font-size:13px;font-weight:700;color:${diff<=0?'var(--gn)':'var(--red)'}">${diff>0?'+':''}${diff}kg total</span>
+        </div>
+        <div class="pt-chart">
+          ${withPeso.slice(-8).map((s,i,arr) => {
+            const p = parseFloat(s.peso);
+            const pct = Math.round(15 + ((p-minP)/range)*80);
+            const isLast = i===arr.length-1;
+            return `<div class="pt-bar-wrap">
+              <div class="pt-bar" style="height:${pct}%;background:${isLast?'var(--red)':'var(--c4)'}"></div>
+              <div class="pt-blabel">${s.dateStr.split(' ')[0]}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+    }
+
+    // Timeline
+    h += `<div class="slabel">Linha do Tempo</div><div class="shape-timeline">`;
+    sorted.forEach((entry, i) => {
+      const prev = sorted[i+1];
+      const diff = prev && entry.peso && prev.peso ? +(parseFloat(entry.peso)-parseFloat(prev.peso)).toFixed(1) : null;
+      const diffHtml = diff!==null ? `<span class="st-diff ${diff<0?'neg':diff>0?'pos':'zero'}">${diff<0?diff+'kg ↓':diff>0?'+'+diff+'kg ↑':'= manteve'}</span>` : '';
+      const realIdx = shapes.indexOf(entry);
+      const thumbs = (entry.fotos||[]).map((f,fi) =>
+        `<img class="st-thumb" src="${f}" onclick="openPhoto('${f}')" loading="lazy">`
+      ).join('');
+      const noFoto = !entry.fotos?.length ? `<div class="st-thumb-empty">📷</div>` : '';
+      h += `<div class="st-item">
+        <div class="st-dot${i===0?' first':''}">${i===0?'★':(sorted.length-i)}</div>
+        <div class="st-card">
+          <div class="st-card-top">
+            ${entry.fotos?.length ? `<img class="st-thumb" src="${entry.fotos[0]}" onclick="openPhoto('${entry.fotos[0]}')" loading="lazy">` : `<div class="st-thumb-empty">📷</div>`}
+            <div class="st-info">
+              <div class="st-date">${entry.dateStr}</div>
+              <div class="st-peso-big">${entry.peso||'—'}<span class="st-peso-unit">kg</span></div>
+              ${diffHtml}
+            </div>
+          </div>
+          ${(entry.fotos||[]).length > 1 ? `<div class="st-thumb-row">${(entry.fotos||[]).slice(1).map(f=>`<img class="st-thumb" src="${f}" onclick="openPhoto('${f}')" loading="lazy">`).join('')}</div>` : ''}
+          ${entry.obs ? `<div class="st-obs">"${entry.obs}"</div>` : ''}
+          <div class="st-actions"><button class="st-del" onclick="deleteShape(${realIdx})">🗑 Apagar</button></div>
+        </div>
+      </div>`;
+    });
+    h += `</div>`;
+  }
+  document.getElementById('v-dash').innerHTML = h;
+}
+
+function openPhoto(src) {
+  document.getElementById('photo-viewer-img').src = src;
+  document.getElementById('photo-viewer').classList.add('show');
+}
+
+function openAddShape() {
+  _shapePhotos = [];
+  // set today's date as default
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('ash-data').value = today;
+  document.getElementById('ash-peso').value = '';
+  document.getElementById('ash-obs').value = '';
+  renderPhotoGrid();
+  document.getElementById('add-shape-ov').classList.add('show');
+}
+
+function closeAddShape() {
+  document.getElementById('add-shape-ov').classList.remove('show');
+}
+
+function renderPhotoGrid() {
+  const grid = document.getElementById('ash-photos-grid');
+  if(!grid) return;
+  let h = '';
+  _shapePhotos.forEach((b64, i) => {
+    h += `<div class="ash-photo-slot">
+      <img src="${b64}">
+      <button class="ash-rm" onclick="removeShapePhoto(${i});event.stopPropagation()">✕</button>
+    </div>`;
+  });
+  if(_shapePhotos.length < 6) {
+    h += `<div class="ash-photo-slot" onclick="triggerPhotoInput()">
+      <span class="ash-add-icon">📷</span>
+    </div>`;
+  }
+  grid.innerHTML = h;
+}
+
+function triggerPhotoInput() {
+  document.getElementById('ash-file-input').value = '';
+  document.getElementById('ash-file-input').click();
+}
+
+function removeShapePhoto(idx) {
+  _shapePhotos.splice(idx, 1);
+  renderPhotoGrid();
+}
+
+function onShapePhoto(input) {
+  const files = Array.from(input.files);
+  const toProcess = files.slice(0, 6 - _shapePhotos.length);
+  let done = 0;
+  toProcess.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new window.Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX = 900;
+        let w = img.width, hh = img.height;
+        if(w > hh) { if(w>MAX){hh=Math.round(hh*MAX/w);w=MAX;} } else { if(hh>MAX){w=Math.round(w*MAX/hh);hh=MAX;} }
+        canvas.width=w; canvas.height=hh;
+        canvas.getContext('2d').drawImage(img,0,0,w,hh);
+        _shapePhotos.push(canvas.toDataURL('image/jpeg', 0.78));
+        done++;
+        if(done===toProcess.length) renderPhotoGrid();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function saveShape() {
+  const dataVal = document.getElementById('ash-data').value;
+  const peso = document.getElementById('ash-peso').value;
+  const obs = document.getElementById('ash-obs').value.trim();
+  if(!peso && !_shapePhotos.length) { showToast('Adiciona o peso ou pelo menos uma foto!'); return; }
+  if(!dataVal) { showToast('Seleciona a data!'); return; }
+  const d = new Date(dataVal + 'T12:00:00');
+  const dateStr = d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'2-digit'});
+  if(!S.shapes) S.shapes = [];
+  S.shapes.push({ ts: d.getTime(), dateStr, peso: peso ? parseFloat(peso) : null, fotos: [..._shapePhotos], obs });
+  save();
+  closeAddShape();
+  showToast('📸 Registro salvo!');
+  renderShapeView(`<div class="prog-tabs" style="margin-bottom:16px"><button class="ptab" onclick="switchDashTab('stats')">📊 Progresso</button><button class="ptab on" onclick="switchDashTab('shape')">📸 Shape & Peso</button></div>`);
+}
+
+function deleteShape(realIdx) {
+  if(!confirm('Apagar este registro?')) return;
+  S.shapes.splice(realIdx, 1);
+  save();
+  showToast('Registro apagado');
+  renderShapeView(`<div class="prog-tabs" style="margin-bottom:16px"><button class="ptab" onclick="switchDashTab('stats')">📊 Progresso</button><button class="ptab on" onclick="switchDashTab('shape')">📸 Shape & Peso</button></div>`);
+}
+
 // ════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', function() {
-  applyCustomTreinos();
-  renderWeek();
-  updateHeader();
+document.addEventListener('DOMContentLoaded', async function() {
   // bind navbar buttons
   document.getElementById('nb-week').addEventListener('click', () => nav('week'));
   document.getElementById('nb-dash').addEventListener('click', () => nav('dash'));
   document.getElementById('nb-edit').addEventListener('click', () => nav('edit'));
   document.getElementById('nb-metas').addEventListener('click', () => nav('metas'));
   document.getElementById('nb-hist').addEventListener('click', () => nav('hist'));
+
+  // Try to load from Supabase
+  const lsMsg = document.getElementById('ls-msg');
+  try {
+    if(lsMsg) lsMsg.textContent = 'Sincronizando com a nuvem...';
+    const cloudData = await Promise.race([
+      sbGet(),
+      new Promise(res => setTimeout(() => res(null), 5000)) // 5s timeout
+    ]);
+    if(cloudData) {
+      // merge: cloud wins, but keep local if cloud is older
+      const localUpdated = S._updatedAt || 0;
+      const cloudUpdated = cloudData._updatedAt || 1;
+      if(cloudUpdated >= localUpdated) {
+        S = cloudData;
+        if(!S.history) S.history = [];
+        if(!S.pesos)   S.pesos   = {};
+        if(!S.streak)  S.streak  = 0;
+        try { localStorage.setItem('fgym2', JSON.stringify(S)); } catch{}
+      }
+    }
+  } catch(e) {
+    console.log('Cloud load failed, using local data');
+  }
+
+  // stamp updated time on every save
+  const _origSave = save;
+
+  document.getElementById('loading-screen').classList.add('hidden');
+  applyCustomTreinos();
+  renderWeek();
+  updateHeader();
 });
 </script>
+
+<!-- SHAPE OVERLAY -->
+<div id="add-shape-ov">
+  <div class="add-shape-sheet">
+    <div class="ash-title">📸 NOVO REGISTRO</div>
+    <div class="ash-field">
+      <label class="ash-label">Data do registro</label>
+      <input class="ash-input" id="ash-data" type="date">
+    </div>
+    <div class="ash-field">
+      <label class="ash-label">Peso (kg)</label>
+      <input class="ash-input" id="ash-peso" type="number" step="0.1" min="30" max="250" placeholder="75.5">
+    </div>
+    <div class="ash-field">
+      <label class="ash-label">Fotos (até 6)</label>
+      <div class="ash-photos-grid" id="ash-photos-grid"></div>
+    </div>
+    <div class="ash-field">
+      <label class="ash-label">Observações (opcional)</label>
+      <input class="ash-input" id="ash-obs" type="text" placeholder="Ex: após bulk, em jejum...">
+    </div>
+    <button class="ash-save" onclick="saveShape()">💾 Salvar Registro</button>
+    <button class="ash-cancel" onclick="closeAddShape()">Cancelar</button>
+  </div>
+</div>
+<input type="file" id="ash-file-input" accept="image/*" style="display:none" onchange="onShapePhoto(this)">
+<!-- PHOTO VIEWER -->
+<div id="photo-viewer">
+  <img id="photo-viewer-img" src="">
+  <button id="photo-viewer-close" onclick="document.getElementById('photo-viewer').classList.remove('show')">✕</button>
+</div>
 
 <!-- ADD META OVERLAY -->
 <div id="add-meta-ov">
@@ -2126,38 +2247,11 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 <div class="goal-complete-toast" id="goal-toast"></div>
 
-<!-- ADD SHAPE OVERLAY -->
-<div id="add-shape-ov">
-  <div class="add-shape-sheet">
-    <div class="ash-title">📸 NOVO REGISTRO</div>
-    <div class="ash-photo-area" id="ash-photo-area" onclick="document.getElementById('ash-file-input').click()">
-      <div class="ash-photo-placeholder" id="ash-placeholder">
-        <div class="ash-photo-icon">📷</div>
-        <div class="ash-photo-txt">Toque para tirar ou escolher foto</div>
-      </div>
-    </div>
-    <input type="file" id="ash-file-input" accept="image/*" style="display:none" onchange="onShapePhoto(this)">
-    <div class="ash-field">
-      <label class="ash-label">Peso atual (kg)</label>
-      <input class="ash-input" id="ash-peso" type="number" step="0.1" min="30" max="250" placeholder="75.5">
-    </div>
-    <div class="ash-field">
-      <label class="ash-label">Observações (opcional)</label>
-      <input class="ash-input sm" id="ash-obs" type="text" placeholder="Ex: após bulk, em jejum...">
-    </div>
-    <button class="ash-save" onclick="saveShape()">💾 Salvar Registro</button>
-    <button class="ash-cancel" onclick="closeAddShape()">Cancelar</button>
-  </div>
-<
-
-<script>
-if('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(r => console.log('SW registered'))
-      .catch(e => console.log('SW error', e));
-  });
-}
-</script>
-
+<div id="loading-screen">
+  <div class="ls-logo">🔥 FORJA GYM</div>
+  <div class="ls-spinner"></div>
+  <div class="ls-sub" id="ls-msg">Carregando seus dados...</div>
+</div>
+<div class="sync-toast" id="sync-toast"><div class="sync-dot" id="sync-dot"></div><span id="sync-msg"></span></div>
 </body>
+</html>

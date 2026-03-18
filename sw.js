@@ -1,4 +1,4 @@
-const CACHE = 'forja-gym-v2';
+const CACHE = 'forja-gym-v7';
 const FILES = [
   './',
   './index.html',
