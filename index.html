@@ -75,6 +75,10 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 .darrow{color:var(--txt3);font-size:20px;font-weight:300}
 .today .darrow{color:var(--red)}
 
+/* ── DICA / TIP BANNER ── */
+.series-tip{background:rgba(244,196,48,.07);border:1px solid rgba(244,196,48,.25);border-radius:12px;padding:10px 14px;font-size:12px;color:var(--yl);line-height:1.5;margin-bottom:14px}
+.series-tip strong{font-weight:700}
+
 /* ── TREINO VIEW ── */
 .back-row{display:flex;align-items:center;gap:8px;margin-bottom:16px}
 .back-btn{display:flex;align-items:center;gap:6px;background:var(--c2);border:1px solid var(--border);border-radius:99px;padding:7px 14px;color:var(--txt2);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)}
@@ -606,19 +610,19 @@ const TREINOS = {
   ]},
   ter:{nome:'LOWER — Posteriores',icone:'🦵',tags:['Posterior','Isquio','Lower'],exercicios:[
     {id:'l-mesa',     nome:'Mesa Flexora',                          series:2, reps:'6-8',   pesos:[null,null],            rest:90},
-    {id:'l-pend-sqt', nome:'Pendulum Squat',                        series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
+    {id:'l-pend-sqt', nome:'Pendulum Squat',                        series:3, reps:'6-8',   pesos:[null,null,null],       rest:120, dica:'Sem a máquina? Substitua por Agachamento Livre com o mesmo range de séries e repetições.'},
     {id:'l-romeno',   nome:'Levantamento Terra Romeno com Barra',   series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
     {id:'l-ext-pern', nome:'Extensão de Pernas na Máquina',         series:2, reps:'8-10',  pesos:[null,null],            rest:75},
     {id:'l-abducao',  nome:'Abdução de Quadril',                    series:2, reps:'8-10',  pesos:[null,null],            rest:60},
     {id:'l-gemeos-pe',nome:'Elevação de Gêmeos em Pé',              series:3, reps:'8-10',  pesos:[null,null,null],       rest:60},
   ]},
-  qua:{nome:'DESCANSO',icone:'😴',tags:['Rest','Recuperação'],exercicios:[]},
+  qua:{nome:'DESCANSO ATIVO',icone:'😴',tags:['Rest','Cardio','Mobilidade'],exercicios:[],dica:'Dia de descanso ativo. Aproveite para fazer cardio leve (corrida/bike) ou trabalho de mobilidade e flexibilidade.'},
   qui:{nome:'PUSH',icone:'🔥',tags:['Peito','Ombro','Tríceps','Push'],exercicios:[
     {id:'p-sup-ret',  nome:'Supino Reto com Halteres',              series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
     {id:'p-crucif-i', nome:'Crucifixo Inclinado com Halteres',      series:2, reps:'8-12',  pesos:[null,null],            rest:75},
     {id:'p-dev-mil',  nome:'Desenvolvimento Militar com Barra',     series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
     {id:'p-el-pol',   nome:'Elevação Lateral na Polia',             series:2, reps:'10-12', pesos:[null,null],            rest:60},
-    {id:'p-mergulho', nome:'Mergulho em Barras Paralelas',          series:2, reps:'6-8',   pesos:[null,null],            rest:90},
+    {id:'p-mergulho', nome:'Mergulho em Barras Paralelas',          series:2, reps:'6-8',   pesos:[null,null],            rest:90, dica:'Precisa de barras paralelas onde você se apoia abaixo (dips). Confirme se sua academia tem o equipamento.'},
   ]},
   sex:{nome:'PULL',icone:'🏋️',tags:['Costas','Bíceps','Pull'],exercicios:[
     {id:'pu-bfix-n',  nome:'Barra Fixa com Pegada Neutra',          series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
@@ -634,7 +638,7 @@ const TREINOS = {
     {id:'lg-hip',     nome:'Hip Thrust com Barra',                  series:3, reps:'8-12',  pesos:[null,null,null],       rest:90},
     {id:'lg-gem-st',  nome:'Elevação de Gêmeos Sentado',            series:3, reps:'10-12', pesos:[null,null,null],       rest:60},
   ]},
-  dom:{nome:'DESCANSO',icone:'😴',tags:['Rest','Recuperação'],exercicios:[]},
+  dom:{nome:'DESCANSO ATIVO',icone:'😴',tags:['Rest','Cardio','Mobilidade'],exercicios:[],dica:'Dia de descanso ativo. Bom momento para cardio regenerativo ou alongamento geral.'},
 };
 
 const DAYS = [
@@ -884,6 +888,14 @@ function renderTreino() {
     </div>
   </div>`;
 
+  if(t.exercicios.length === 0 && t.dica) {
+    h += `<div class="series-tip" style="margin-bottom:16px">💡 ${t.dica}</div>`;
+  }
+
+  if(t.exercicios.length > 0) {
+    h += `<div class="series-tip">💡 <strong>Séries válidas:</strong> todas as séries são working sets — foco em carga. Primeira série: 8 reps. Segunda: 6 reps. Progressão de peso quando dominar a faixa.</div>`;
+  }
+
   if(!workoutStarted) {
     h += `<button class="start-btn" id="start-btn" onclick="startWorkout()">▶ INICIAR TREINO</button>`;
   } else {
@@ -913,6 +925,7 @@ function renderTreino() {
         </div>
       </div>
       <div class="exbody" id="exb-${ex.id}">
+        ${ex.dica ? `<div class="series-tip" style="margin:0 0 12px">⚠️ ${ex.dica}</div>` : ''}
         <div class="rest-config">
           <span class="rc-label">⏱ Descanso</span>
           <div class="rc-ctrl">
