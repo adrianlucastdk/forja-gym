@@ -595,53 +595,46 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 // DATA
 // ════════════════════════════════════════════
 const TREINOS = {
-  seg:{nome:'PEITO',icone:'💪',tags:['Peito','Push','Peitoral'],exercicios:[
-    {id:'sup-inc', nome:'Supino Inclinado Halter', series:5, reps:'6-8', pesos:[12,14,16,18,20], rest:90},
-    {id:'fly',     nome:'Fly',                     series:4, reps:'8',   pesos:[10,10,10,10],    rest:75},
-    {id:'peck',    nome:'Peck Deck',                series:4, reps:'8',   pesos:[20,30,35,35],    rest:75},
-    {id:'sup-ret', nome:'Supino Reto Halter',       series:4, reps:'5-6', pesos:[null,null,null,null], rest:90},
-    {id:'cross',   nome:'Crossover Polia Alta',     series:4, reps:'falha+drop', pesos:[null,null,null,null], rest:60},
+  seg:{nome:'UPPER',icone:'💪',tags:['Peito','Costas','Upper'],exercicios:[
+    {id:'u-sup-inc',  nome:'Supino Inclinado com Barra',            series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
+    {id:'u-crucif',   nome:'Crucifixo no Cabo ou Máquina',          series:2, reps:'10-12', pesos:[null,null],            rest:75},
+    {id:'u-bfix',     nome:'Barra Fixa',                            series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
+    {id:'u-pendlay',  nome:'Remada Pendlay com Barra',              series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
+    {id:'u-el-lat',   nome:'Elevação Lateral Unilateral c/ Halter', series:2, reps:'8-10',  pesos:[null,null],            rest:60},
+    {id:'u-tri-cab',  nome:'Extensão de Tríceps Acima da Cabeça',   series:2, reps:'8-10',  pesos:[null,null],            rest:75},
+    {id:'u-rosca',    nome:'Rosca Direta com Barra',                series:2, reps:'6-8',   pesos:[null,null],            rest:75},
   ]},
-  ter:{nome:'COSTAS',icone:'🏋️',tags:['Costas','Pull','Lat'],exercicios:[
-    {id:'rem-curv',nome:'Remada Curvada',    series:4,reps:'6-8',pesos:[30,35,35,40],  rest:90},
-    {id:'pux-alta',nome:'Puxada Alta',       series:4,reps:'5-6',pesos:[25,30,35,35],  rest:90},
-    {id:'rem-bx',  nome:'Remada Baixa',      series:4,reps:'6',  pesos:[39,45.5,45.5,52], rest:90},
-    {id:'serrote', nome:'Serrote',           series:4,reps:'8',  pesos:[16,18,18,20],  rest:75},
-    {id:'dead',    nome:'Deadlift',          series:4,reps:'6-8',pesos:[null,null,null,null], rest:120},
+  ter:{nome:'LOWER — Posteriores',icone:'🦵',tags:['Posterior','Isquio','Lower'],exercicios:[
+    {id:'l-mesa',     nome:'Mesa Flexora',                          series:2, reps:'6-8',   pesos:[null,null],            rest:90},
+    {id:'l-pend-sqt', nome:'Pendulum Squat',                        series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
+    {id:'l-romeno',   nome:'Levantamento Terra Romeno com Barra',   series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
+    {id:'l-ext-pern', nome:'Extensão de Pernas na Máquina',         series:2, reps:'8-10',  pesos:[null,null],            rest:75},
+    {id:'l-abducao',  nome:'Abdução de Quadril',                    series:2, reps:'8-10',  pesos:[null,null],            rest:60},
+    {id:'l-gemeos-pe',nome:'Elevação de Gêmeos em Pé',              series:3, reps:'8-10',  pesos:[null,null,null],       rest:60},
   ]},
-  qua:{nome:'QUADRÍCEPS + POSTERIOR',icone:'🦵',tags:['Pernas','Quad','Posterior'],exercicios:[
-    {id:'pant', nome:'Panturrilha Sentado', series:6,reps:'10',  pesos:[20,30,35,40,40,40], rest:60},
-    {id:'mesa', nome:'Mesa Flexora',        series:4,reps:'8',   pesos:[25,30,35,40],       rest:75},
-    {id:'stiff',nome:'Stiff',               series:4,reps:'8',   pesos:[null,null,null,null],rest:90},
-    {id:'agach',nome:'Agachamento Livre',   series:4,reps:'8',   pesos:[null,null,null,null],rest:120},
-    {id:'ext',  nome:'Extensora',           series:4,reps:'6',   pesos:[45,50,55,60],       rest:75},
-    {id:'leg',  nome:'Leg Press',           series:4,reps:'6-8', pesos:[null,null,null,null],rest:90},
+  qua:{nome:'DESCANSO',icone:'😴',tags:['Rest','Recuperação'],exercicios:[]},
+  qui:{nome:'PUSH',icone:'🔥',tags:['Peito','Ombro','Tríceps','Push'],exercicios:[
+    {id:'p-sup-ret',  nome:'Supino Reto com Halteres',              series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
+    {id:'p-crucif-i', nome:'Crucifixo Inclinado com Halteres',      series:2, reps:'8-12',  pesos:[null,null],            rest:75},
+    {id:'p-dev-mil',  nome:'Desenvolvimento Militar com Barra',     series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
+    {id:'p-el-pol',   nome:'Elevação Lateral na Polia',             series:2, reps:'10-12', pesos:[null,null],            rest:60},
+    {id:'p-mergulho', nome:'Mergulho em Barras Paralelas',          series:2, reps:'6-8',   pesos:[null,null],            rest:90},
   ]},
-  qui:{nome:'OMBRO COMPLETO',icone:'🎯',tags:['Ombro','Deltóide','Trapézio'],exercicios:[
-    {id:'dev-halt',  nome:'Desenvolvimento Halter',      series:4,reps:'12',     pesos:[null,null,null,null],rest:90},
-    {id:'dev-smth',  nome:'Desenvolvimento Smith',       series:4,reps:'10',     pesos:[null,null,null,null],rest:90},
-    {id:'el-lat',    nome:'Elevação Lateral Halter c/ Drop', series:4,reps:'10+drop',pesos:[null,null,null,null],rest:60},
-    {id:'el-pol',    nome:'Elevação Lateral Polia',      series:4,reps:'10',     pesos:[null,null,null,null],rest:60},
-    {id:'crucif-inv',nome:'Crucifixo Invertido Cross',   series:4,reps:'12',     pesos:[null,null,null,null],rest:75},
+  sex:{nome:'PULL',icone:'🏋️',tags:['Costas','Bíceps','Pull'],exercicios:[
+    {id:'pu-bfix-n',  nome:'Barra Fixa com Pegada Neutra',          series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
+    {id:'pu-rem-curv',nome:'Remada Curvada com Halteres',           series:3, reps:'8-10',  pesos:[null,null,null],       rest:90},
+    {id:'pu-pux-alt', nome:'Puxada na Polia Alta',                  series:2, reps:'8-12',  pesos:[null,null],            rest:90},
+    {id:'pu-facepull',nome:'Face Pull com Corda',                   series:2, reps:'12-15', pesos:[null,null],            rest:60},
+    {id:'pu-martelo', nome:'Rosca Martelo com Halteres',            series:2, reps:'8-10',  pesos:[null,null],            rest:75},
   ]},
-  sex:{nome:'BÍCEPS + TRÍCEPS',icone:'💥',tags:['Bíceps','Tríceps','Arms'],exercicios:[
-    {id:'tri-cord',nome:'Tríceps Corda',    series:4,reps:'6',     pesos:[5,6,7,7],    rest:75},
-    {id:'tri-test',nome:'Tríceps Testa',    series:4,reps:'8',     pesos:[15,15,15,15],rest:75},
-    {id:'tri-fran',nome:'Tríceps Francês',  series:4,reps:'falha', pesos:[9,10,10,10], rest:75},
-    {id:'bic-45',  nome:'Bíceps 45°',       series:3,reps:'6',     pesos:[8,8,8],      rest:75},
-    {id:'mart',    nome:'Bíceps Martelo',   series:4,reps:'8',     pesos:[12,12,12,12],rest:75},
-    {id:'scott',   nome:'Scott',            series:4,reps:'falha', pesos:[null,null,null,null], rest:75},
+  sab:{nome:'LEGS — Glúteo & Quad',icone:'🦵',tags:['Pernas','Glúteo','Quadríceps','Legs'],exercicios:[
+    {id:'lg-agach-f', nome:'Agachamento Frontal com Barra',         series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
+    {id:'lg-legp45',  nome:'Leg Press 45°',                         series:3, reps:'8-10',  pesos:[null,null,null],       rest:90},
+    {id:'lg-bulg',    nome:'Afundo Búlgaro com Halteres',           series:2, reps:'8-10',  pesos:[null,null],            rest:90},
+    {id:'lg-hip',     nome:'Hip Thrust com Barra',                  series:3, reps:'8-12',  pesos:[null,null,null],       rest:90},
+    {id:'lg-gem-st',  nome:'Elevação de Gêmeos Sentado',            series:3, reps:'10-12', pesos:[null,null,null],       rest:60},
   ]},
-  sab:{nome:'TREINO LIVRE',icone:'⚡',tags:['Livre','Extra'],exercicios:[
-    {id:'sab-ex1',nome:'Exercício 1',series:3,reps:'8-12',pesos:[null,null,null],rest:90},
-    {id:'sab-ex2',nome:'Exercício 2',series:3,reps:'8-12',pesos:[null,null,null],rest:90},
-    {id:'sab-ex3',nome:'Exercício 3',series:3,reps:'8-12',pesos:[null,null,null],rest:90},
-  ]},
-  dom:{nome:'TREINO LIVRE',icone:'⚡',tags:['Livre','Extra'],exercicios:[
-    {id:'dom-ex1',nome:'Exercício 1',series:3,reps:'8-12',pesos:[null,null,null],rest:90},
-    {id:'dom-ex2',nome:'Exercício 2',series:3,reps:'8-12',pesos:[null,null,null],rest:90},
-    {id:'dom-ex3',nome:'Exercício 3',series:3,reps:'8-12',pesos:[null,null,null],rest:90},
-  ]},
+  dom:{nome:'DESCANSO',icone:'😴',tags:['Rest','Recuperação'],exercicios:[]},
 };
 
 const DAYS = [
@@ -660,7 +653,7 @@ const TODAY_IDX = _dowMap[_dow] ?? -1;
 
 // Which days have active training (user-configurable, saved in S)
 function getActiveDays() {
-  if(!S.activeDays) return ['seg','ter','qua','qui','sex']; // default Mon-Fri
+  if(!S.activeDays) return ['seg','ter','qui','sex','sab']; // default: Upper/Lower/Push/Pull/Legs
   return S.activeDays;
 }
 
@@ -834,7 +827,7 @@ function renderWeek() {
 }
 
 function toggleDayActive(dayId) {
-  if(!S.activeDays) S.activeDays = ['seg','ter','qua','qui','sex'];
+  if(!S.activeDays) S.activeDays = ['seg','ter','qui','sex','sab'];
   const idx = S.activeDays.indexOf(dayId);
   if(idx === -1) {
     S.activeDays.push(dayId);
