@@ -79,6 +79,17 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 .series-tip{background:rgba(244,196,48,.07);border:1px solid rgba(244,196,48,.25);border-radius:12px;padding:10px 14px;font-size:12px;color:var(--yl);line-height:1.5;margin-bottom:14px}
 .series-tip strong{font-weight:700}
 
+/* ── AQUECIMENTO ── */
+.aquec-block{margin-bottom:10px}
+.aquec-label{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--bl);text-transform:uppercase;margin-bottom:6px;padding:0 2px}
+.work-label{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:6px;padding:0 2px}
+.aquec-row{display:grid;grid-template-columns:28px 1fr 1fr 1fr 32px;gap:8px;align-items:center;padding:8px 4px;border-radius:10px;margin-bottom:4px;background:rgba(96,165,250,.05);border:1px solid rgba(96,165,250,.15)}
+.aquec-row.done-row{background:rgba(96,165,250,.08)}
+.aquec-row.active-row{background:rgba(96,165,250,.09);border-color:rgba(96,165,250,.3)}
+.aquec-row .aquec-sn{color:var(--bl)!important;background:rgba(96,165,250,.12)!important;border-color:rgba(96,165,250,.3)!important}
+.aquec-row.active-row{background:rgba(96,165,250,.09)!important}
+.aquec-reps-label{font-size:13px;color:var(--bl);font-weight:600;grid-column:span 3}
+
 /* ── TREINO VIEW ── */
 .back-row{display:flex;align-items:center;gap:8px;margin-bottom:16px}
 .back-btn{display:flex;align-items:center;gap:6px;background:var(--c2);border:1px solid var(--border);border-radius:99px;padding:7px 14px;color:var(--txt2);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)}
@@ -763,6 +774,7 @@ let workoutStarted = false;
 let workoutStartTime = null;
 let workoutInterval = null;
 let seriesDone = {}; // {exId: [bool,bool,...]}
+let aquecDone  = {}; // {exId: [bool,bool]} warm-up series
 let sessionPesos = {}; // {exId: [peso,...]}
 let sessionReps  = {}; // {exId: [reps,...]}
 let restDefaults = {}; // {exId: seconds}
@@ -854,6 +866,7 @@ function openTreino(dayId) {
   workoutStartTime = null;
   clearInterval(workoutInterval);
   seriesDone = {};
+  aquecDone  = {};
   sessionPesos = {};
   sessionReps = {};
   restDefaults = {};
@@ -862,6 +875,7 @@ function openTreino(dayId) {
   const t = TREINOS[dayId];
   t.exercicios.forEach(ex => {
     seriesDone[ex.id] = new Array(ex.series).fill(false);
+    aquecDone[ex.id]  = [false, false];
     sessionPesos[ex.id] = [...(S.pesos[ex.id] || ex.pesos)];
     sessionReps[ex.id]  = new Array(ex.series).fill('');
     restDefaults[ex.id] = ex.rest;
@@ -926,6 +940,11 @@ function renderTreino() {
       </div>
       <div class="exbody" id="exb-${ex.id}">
         ${ex.dica ? `<div class="series-tip" style="margin:0 0 12px">⚠️ ${ex.dica}</div>` : ''}
+        <div class="aquec-block" id="aquec-${ex.id}">
+          <div class="aquec-label">🔥 Aquecimento</div>
+          ${buildWarmupRows(ex)}
+        </div>
+        <div class="work-label">💪 Séries de Trabalho</div>
         <div class="rest-config">
           <span class="rc-label">⏱ Descanso</span>
           <div class="rc-ctrl">
@@ -1026,6 +1045,44 @@ function buildSeriesRows(ex) {
     </div>`;
   }
   return h;
+}
+
+function buildWarmupRows(ex) {
+  const aq = aquecDone[ex.id] || [false, false];
+  const repsMap = ['8', '6'];
+  let h = '';
+  for(let i = 0; i < 2; i++) {
+    const isDone = aq[i];
+    const isNext = !isDone && (i === 0 || aq[0]);
+    h += `<div class="aquec-row${isDone?' done-row':isNext?' active-row':''}" id="aqr-${ex.id}-${i}">
+      <span class="sn aquec-sn${isDone?' done-sn':''}">${isDone ? '✓' : 'A'+(i+1)}</span>
+      <span class="aquec-reps-label">${repsMap[i]} reps — carga leve</span>
+      <span></span>
+      <span></span>
+      <button class="check-btn${isDone?' done':isNext&&workoutStarted?' current':''}"
+        id="aqchk-${ex.id}-${i}"
+        onclick="checkAquec('${ex.id}',${i});event.stopPropagation()">
+        ${isDone ? '✓' : '○'}
+      </button>
+    </div>`;
+  }
+  return h;
+}
+
+function checkAquec(exId, idx) {
+  if(!workoutStarted) { showToast('Inicia o treino primeiro! ▶'); return; }
+  if(aquecDone[exId][idx]) return;
+  aquecDone[exId][idx] = true;
+
+  const ex = Object.values(TREINOS).flatMap(t=>t.exercicios).find(e=>e.id===exId);
+  const block = document.getElementById('aquec-' + exId);
+  if(block) {
+    const old = block.querySelectorAll('.aquec-row');
+    const tmp = document.createElement('div');
+    tmp.innerHTML = buildWarmupRows(ex);
+    const novo = tmp.querySelectorAll('.aquec-row');
+    old.forEach((r,i) => { if(novo[i]) r.replaceWith(novo[i]); });
+  }
 }
 
 function toggleEx(exId) {
