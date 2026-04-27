@@ -622,7 +622,7 @@ const TREINOS = {
     {id:'p-crucif-i', nome:'Crucifixo Inclinado com Halteres',      series:2, reps:'8-12',  pesos:[null,null],            rest:75},
     {id:'p-dev-mil',  nome:'Desenvolvimento Militar com Barra',     series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
     {id:'p-el-pol',   nome:'Elevação Lateral na Polia',             series:2, reps:'10-12', pesos:[null,null],            rest:60},
-    {id:'p-mergulho', nome:'Mergulho em Barras Paralelas',          series:2, reps:'6-8',   pesos:[null,null],            rest:90, dica:'Precisa de barras paralelas onde você se apoia abaixo (dips). Confirme se sua academia tem o equipamento.'},
+    {id:'p-mergulho', nome:'Mergulho em Barras Paralelas',          series:2, reps:'6-8',   pesos:[null,null],            rest:90, dica:'Barras paralelas (dips) — você se apoia nas duas barras e desce o corpo. Se ainda não tiver força suficiente, use o Graviton (máquina de assistência) para facilitar o movimento.'},
   ]},
   sex:{nome:'PULL',icone:'🏋️',tags:['Costas','Bíceps','Pull'],exercicios:[
     {id:'pu-bfix-n',  nome:'Barra Fixa com Pegada Neutra',          series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
@@ -893,7 +893,7 @@ function renderTreino() {
   }
 
   if(t.exercicios.length > 0) {
-    h += `<div class="series-tip">💡 <strong>Séries válidas:</strong> todas as séries são working sets — foco em carga. Primeira série: 8 reps. Segunda: 6 reps. Progressão de peso quando dominar a faixa.</div>`;
+    h += `<div class="series-tip">💡 <strong>Séries válidas:</strong> as séries listadas são todas working sets (séries de trabalho real). Faça aquecimento progressivo com carga menor <em>antes</em> de começar — não está no app. Na 1ª série: 8 reps. Na última: 6 reps. Sobe o peso quando dominar a faixa.</div>`;
   }
 
   if(!workoutStarted) {
