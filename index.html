@@ -88,7 +88,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 .aquec-row.active-row{background:rgba(96,165,250,.09);border-color:rgba(96,165,250,.3)}
 .aquec-row .aquec-sn{color:var(--bl)!important;background:rgba(96,165,250,.12)!important;border-color:rgba(96,165,250,.3)!important}
 .aquec-row.active-row{background:rgba(96,165,250,.09)!important}
-.aquec-reps-label{font-size:13px;color:var(--bl);font-weight:600;grid-column:span 3}
+.aquec-name{font-size:12px;font-weight:700;color:var(--bl);letter-spacing:.3px}
 
 /* ── TREINO VIEW ── */
 .back-row{display:flex;align-items:center;gap:8px;margin-bottom:16px}
@@ -616,8 +616,8 @@ const TREINOS = {
     {id:'u-bfix',     nome:'Barra Fixa',                            series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
     {id:'u-pendlay',  nome:'Remada Pendlay com Barra',              series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
     {id:'u-el-lat',   nome:'Elevação Lateral Unilateral c/ Halter', series:2, reps:'8-10',  pesos:[null,null],            rest:60},
-    {id:'u-tri-cab',  nome:'Extensão de Tríceps Acima da Cabeça',   series:2, reps:'8-10',  pesos:[null,null],            rest:75},
-    {id:'u-rosca',    nome:'Rosca Direta com Barra',                series:2, reps:'6-8',   pesos:[null,null],            rest:75},
+    {id:'u-tri-cab',  nome:'Extensão de Tríceps Acima da Cabeça',   series:2, reps:'8-10',  pesos:[null,null],            rest:75,  noWarmup:true},
+    {id:'u-rosca',    nome:'Rosca Direta com Barra',                series:2, reps:'6-8',   pesos:[null,null],            rest:75,  noWarmup:true},
   ]},
   ter:{nome:'LOWER — Posteriores',icone:'🦵',tags:['Posterior','Isquio','Lower'],exercicios:[
     {id:'l-mesa',     nome:'Mesa Flexora',                          series:2, reps:'6-8',   pesos:[null,null],            rest:90},
@@ -640,7 +640,7 @@ const TREINOS = {
     {id:'pu-rem-curv',nome:'Remada Curvada com Halteres',           series:3, reps:'8-10',  pesos:[null,null,null],       rest:90},
     {id:'pu-pux-alt', nome:'Puxada na Polia Alta',                  series:2, reps:'8-12',  pesos:[null,null],            rest:90},
     {id:'pu-facepull',nome:'Face Pull com Corda',                   series:2, reps:'12-15', pesos:[null,null],            rest:60},
-    {id:'pu-martelo', nome:'Rosca Martelo com Halteres',            series:2, reps:'8-10',  pesos:[null,null],            rest:75},
+    {id:'pu-martelo', nome:'Rosca Martelo com Halteres',            series:2, reps:'8-10',  pesos:[null,null],            rest:75,  noWarmup:true},
   ]},
   sab:{nome:'LEGS — Glúteo & Quad',icone:'🦵',tags:['Pernas','Glúteo','Quadríceps','Legs'],exercicios:[
     {id:'lg-agach-f', nome:'Agachamento Frontal com Barra',         series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
@@ -774,7 +774,8 @@ let workoutStarted = false;
 let workoutStartTime = null;
 let workoutInterval = null;
 let seriesDone = {}; // {exId: [bool,bool,...]}
-let aquecDone  = {}; // {exId: [bool,bool]} warm-up series
+let aquecDone       = {}; // {exId: [bool,bool]}
+let sessionAquecPesos = {}; // {exId: [peso,peso]}
 let sessionPesos = {}; // {exId: [peso,...]}
 let sessionReps  = {}; // {exId: [reps,...]}
 let restDefaults = {}; // {exId: seconds}
@@ -867,6 +868,7 @@ function openTreino(dayId) {
   clearInterval(workoutInterval);
   seriesDone = {};
   aquecDone  = {};
+  sessionAquecPesos = {};
   sessionPesos = {};
   sessionReps = {};
   restDefaults = {};
@@ -874,8 +876,9 @@ function openTreino(dayId) {
 
   const t = TREINOS[dayId];
   t.exercicios.forEach(ex => {
-    seriesDone[ex.id] = new Array(ex.series).fill(false);
-    aquecDone[ex.id]  = [false, false];
+    seriesDone[ex.id]        = new Array(ex.series).fill(false);
+    aquecDone[ex.id]         = ex.noWarmup ? [] : [false, false];
+    sessionAquecPesos[ex.id] = ex.noWarmup ? [] : [...(S.aquecPesos?.[ex.id] || [null, null])];
     sessionPesos[ex.id] = [...(S.pesos[ex.id] || ex.pesos)];
     sessionReps[ex.id]  = new Array(ex.series).fill('');
     restDefaults[ex.id] = ex.rest;
@@ -940,10 +943,11 @@ function renderTreino() {
       </div>
       <div class="exbody" id="exb-${ex.id}">
         ${ex.dica ? `<div class="series-tip" style="margin:0 0 12px">⚠️ ${ex.dica}</div>` : ''}
-        <div class="aquec-block" id="aquec-${ex.id}">
-          <div class="aquec-label">🔥 Aquecimento</div>
+        ${!ex.noWarmup ? `<div class="aquec-block" id="aquec-${ex.id}">
+          <div class="aquec-label">🔥 Pré-trabalho</div>
+          <div class="series-header"><span class="sh-label"></span><span class="sh-label">Peso (kg)</span><span class="sh-label"></span><span class="sh-label">Anterior</span><span class="sh-label"></span></div>
           ${buildWarmupRows(ex)}
-        </div>
+        </div>` : ''}
         <div class="work-label">💪 Séries de Trabalho</div>
         <div class="rest-config">
           <span class="rc-label">⏱ Descanso</span>
@@ -1048,17 +1052,24 @@ function buildSeriesRows(ex) {
 }
 
 function buildWarmupRows(ex) {
-  const aq = aquecDone[ex.id] || [false, false];
-  const repsMap = ['8', '6'];
+  if(ex.noWarmup) return '';
+  const aq      = aquecDone[ex.id]        || [false, false];
+  const cur     = sessionAquecPesos[ex.id] || [null, null];
+  const ant     = S.aquecPesos?.[ex.id]   || [null, null];
+  const labels  = ['Aquecimento', 'Reconhecimento'];
+  const shorts  = ['AQ', 'REC'];
   let h = '';
   for(let i = 0; i < 2; i++) {
     const isDone = aq[i];
     const isNext = !isDone && (i === 0 || aq[0]);
     h += `<div class="aquec-row${isDone?' done-row':isNext?' active-row':''}" id="aqr-${ex.id}-${i}">
-      <span class="sn aquec-sn${isDone?' done-sn':''}">${isDone ? '✓' : 'A'+(i+1)}</span>
-      <span class="aquec-reps-label">${repsMap[i]} reps — carga leve</span>
-      <span></span>
-      <span></span>
+      <span class="sn aquec-sn${isDone?' done-sn':''}">${isDone ? '✓' : shorts[i]}</span>
+      <span class="aquec-name">${labels[i]}</span>
+      <input class="sinput" type="number" step="0.5" min="0"
+        value="${cur[i] ?? ''}" placeholder="${ant[i] ?? '—'}"
+        oninput="onAquecPeso('${ex.id}',${i},this.value)">
+      <input class="sinput ant" type="text" readonly
+        value="${ant[i] != null ? ant[i]+'kg' : '—'}">
       <button class="check-btn${isDone?' done':isNext&&workoutStarted?' current':''}"
         id="aqchk-${ex.id}-${i}"
         onclick="checkAquec('${ex.id}',${i});event.stopPropagation()">
@@ -1069,10 +1080,22 @@ function buildWarmupRows(ex) {
   return h;
 }
 
+function onAquecPeso(exId, idx, val) {
+  if(!sessionAquecPesos[exId]) sessionAquecPesos[exId] = [null, null];
+  sessionAquecPesos[exId][idx] = val ? parseFloat(val) : null;
+}
+
 function checkAquec(exId, idx) {
   if(!workoutStarted) { showToast('Inicia o treino primeiro! ▶'); return; }
   if(aquecDone[exId][idx]) return;
   aquecDone[exId][idx] = true;
+
+  // save peso
+  const peso = sessionAquecPesos[exId]?.[idx];
+  if(!S.aquecPesos) S.aquecPesos = {};
+  if(!S.aquecPesos[exId]) S.aquecPesos[exId] = [null, null];
+  if(peso != null) S.aquecPesos[exId][idx] = peso;
+  save();
 
   const ex = Object.values(TREINOS).flatMap(t=>t.exercicios).find(e=>e.id===exId);
   const block = document.getElementById('aquec-' + exId);
