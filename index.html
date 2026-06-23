@@ -831,7 +831,7 @@ if(!S.history)       S.history       = [];
 if(!S.pesos)         S.pesos         = {};
 if(!S.aquecPesos)    S.aquecPesos    = {};
 if(!S.streak)        S.streak        = 0;
-if(!S.corridaSemana) S.corridaSemana = 1;
+// corridaStartDate: 'YYYY-MM-DD' — set once, week auto-calculates
 
 function save() {
   S._updatedAt = Date.now();
@@ -884,19 +884,34 @@ function _doNav(v) {
 function renderWeek() {
   const el = document.getElementById('v-week');
   const activeDays = getActiveDays();
-  const semIdx = Math.min((S.corridaSemana||1)-1, CARDIO_PROGRAMA.length-1);
+  const _semAuto = getCorridaSemana();
+  const semIdx = _semAuto ? Math.min(_semAuto-1, 7) : 0;
   const semObj = CARDIO_PROGRAMA[semIdx];
-  let h = `<div class="corrida-semana-banner">
-    <div class="csb-top">
-      <span class="csb-label">🏃 PROGRAMA DE CORRIDA</span>
-      <div class="csb-nav">
-        <button class="csb-btn" onclick="mudaSemanaCorreida(-1)" ${S.corridaSemana<=1?'disabled':''}>‹</button>
-        <span class="csb-num">Semana ${S.corridaSemana}/8</span>
-        <button class="csb-btn" onclick="mudaSemanaCorreida(1)" ${S.corridaSemana>=8?'disabled':''}>›</button>
+  let h = '';
+  if(!S.corridaStartDate) {
+    const hoje = new Date().toISOString().split('T')[0];
+    h += `<div class="corrida-semana-banner">
+      <div class="csb-top"><span class="csb-label">🏃 PROGRAMA DE CORRIDA</span></div>
+      <div class="csb-obj" style="margin-bottom:10px">Configure a data de início para ativar o plano de 8 semanas automaticamente.</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input id="corrida-start-input" type="date" value="${hoje}" style="flex:1;background:var(--c2);border:1px solid var(--border2);border-radius:10px;padding:8px 12px;color:var(--txt);font-size:13px">
+        <button onclick="iniciarPrograma()" style="background:var(--bl);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer">Iniciar</button>
       </div>
-    </div>
-    <div class="csb-obj">${semObj.objetivo}</div>
-  </div>`;
+    </div>`;
+  } else {
+    const startFmt = new Date(S.corridaStartDate+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    h += `<div class="corrida-semana-banner">
+      <div class="csb-top">
+        <span class="csb-label">🏃 PROGRAMA DE CORRIDA</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="csb-num">Semana ${_semAuto}/8</span>
+          <button onclick="resetPrograma()" style="font-size:10px;background:transparent;border:none;color:var(--txt3);cursor:pointer;padding:2px 4px">↺</button>
+        </div>
+      </div>
+      <div class="csb-obj">${semObj.objetivo}</div>
+      <div style="font-size:11px;color:var(--txt3);margin-top:4px">Início: ${startFmt} · Dias de corrida: Qua, Sex, Dom</div>
+    </div>`;
+  }
   h += '<div class="slabel" style="margin-top:14px">Esta Semana</div>';
   DAYS.forEach((d,i) => {
     const t = TREINOS[d.id];
@@ -930,8 +945,26 @@ function renderWeek() {
   el.innerHTML = h;
 }
 
-function mudaSemanaCorreida(delta) {
-  S.corridaSemana = Math.max(1, Math.min(8, (S.corridaSemana||1) + delta));
+function getCorridaSemana() {
+  if(!S.corridaStartDate) return null;
+  const start = new Date(S.corridaStartDate + 'T00:00:00');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const days = Math.floor((today - start) / 86400000);
+  return Math.min(8, Math.max(1, Math.floor(days / 7) + 1));
+}
+
+function iniciarPrograma() {
+  const input = document.getElementById('corrida-start-input');
+  const val = input ? input.value : '';
+  if(!val) { showToast('Escolha uma data de início!'); return; }
+  S.corridaStartDate = val;
+  save();
+  renderWeek();
+}
+
+function resetPrograma() {
+  if(!confirm('Reiniciar o programa do zero?')) return;
+  S.corridaStartDate = null;
   save();
   renderWeek();
 }
@@ -1064,9 +1097,10 @@ function renderTreino() {
 
   // CARDIO BLOCK
   const cSaved = sessionCardio.saved;
-  const _semIdx = Math.min((S.corridaSemana||1)-1, CARDIO_PROGRAMA.length-1);
-  const _prescr = CARDIO_PROGRAMA[_semIdx]?.[currentDayId];
-  const cBadge = cSaved ? `<span class="cardio-saved-badge">✓ ${sessionCardio.dist}km registrado</span>` : (_prescr ? `<span style="font-size:11px;color:var(--bl)">S${S.corridaSemana}</span>` : '<span style="font-size:11px;color:var(--txt3)">Opcional</span>');
+  const _semAuto2 = getCorridaSemana();
+  const _semIdx = _semAuto2 ? Math.min(_semAuto2-1, 7) : null;
+  const _prescr = _semIdx !== null ? CARDIO_PROGRAMA[_semIdx]?.[currentDayId] : null;
+  const cBadge = cSaved ? `<span class="cardio-saved-badge">✓ ${sessionCardio.dist}km registrado</span>` : (_prescr ? `<span style="font-size:11px;color:var(--bl)">S${_semAuto2}/8</span>` : '<span style="font-size:11px;color:var(--txt3)">Opcional</span>');
   const cardioTitle = _prescr ? _prescr.titulo : 'Cardio';
   const cardioSub   = _prescr ? (_prescr.dur + ' · RPE ' + _prescr.rpe) : 'Corrida ou Bike';
   const cardioIcon  = _prescr?.tipo === 'caminhada' ? '🚶' : (sessionCardio.type==='bike'?'🚴':'🏃');
