@@ -75,6 +75,24 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
 .darrow{color:var(--txt3);font-size:20px;font-weight:300}
 .today .darrow{color:var(--red)}
 
+/* ── PROGRAMA DE CORRIDA — BANNER SEMANA ── */
+.corrida-semana-banner{background:linear-gradient(135deg,rgba(96,165,250,.08),rgba(96,165,250,.03));border:1px solid rgba(96,165,250,.25);border-radius:16px;padding:14px 16px;margin-bottom:4px}
+.csb-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.csb-label{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--bl);text-transform:uppercase}
+.csb-nav{display:flex;align-items:center;gap:8px}
+.csb-num{font-size:13px;font-weight:700;color:var(--bl)}
+.csb-btn{width:28px;height:28px;border-radius:8px;background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.3);color:var(--bl);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.csb-btn:disabled{opacity:.3;cursor:default}
+.csb-obj{font-size:13px;color:var(--txt2);line-height:1.4}
+
+/* ── CARDIO PRESCRIÇÃO ── */
+.cardio-prescricao{background:rgba(96,165,250,.05);border:1px solid rgba(96,165,250,.18);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;flex-direction:column;gap:10px}
+.cp-row{display:flex;align-items:flex-start;gap:10px}
+.cp-ico{font-size:14px;margin-top:1px;flex-shrink:0}
+.cp-lbl{display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--bl);text-transform:uppercase;margin-bottom:2px}
+.cp-val{display:block;font-size:13px;color:var(--txt);line-height:1.4}
+.cp-obs{color:var(--txt2);font-size:12px}
+
 /* ── DICA / TIP BANNER ── */
 .series-tip{background:rgba(244,196,48,.07);border:1px solid rgba(244,196,48,.25);border-radius:12px;padding:10px 14px;font-size:12px;color:var(--yl);line-height:1.5;margin-bottom:14px}
 .series-tip strong{font-weight:700}
@@ -615,7 +633,7 @@ const TREINOS = {
     {id:'u-crucif',   nome:'Crucifixo no Cabo ou Máquina',          series:2, reps:'10-12', pesos:[null,null],            rest:75},
     {id:'u-bfix',     nome:'Barra Fixa',                            series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
     {id:'u-pendlay',  nome:'Remada Pendlay com Barra',              series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
-    {id:'u-el-lat',   nome:'Elevação Lateral Unilateral c/ Halter', series:2, reps:'8-10',  pesos:[null,null],            rest:60},
+    {id:'u-el-lat',   nome:'Elevação Lateral Unilateral c/ Halter', series:2, reps:'8-10',  pesos:[null,null],            rest:60,  noWarmup:true},
     {id:'u-tri-cab',  nome:'Extensão de Tríceps Acima da Cabeça',   series:2, reps:'8-10',  pesos:[null,null],            rest:75,  noWarmup:true},
     {id:'u-rosca',    nome:'Rosca Direta com Barra',                series:2, reps:'6-8',   pesos:[null,null],            rest:75,  noWarmup:true},
   ]},
@@ -624,22 +642,22 @@ const TREINOS = {
     {id:'l-pend-sqt', nome:'Pendulum Squat',                        series:3, reps:'6-8',   pesos:[null,null,null],       rest:120, dica:'Sem a máquina? Substitua por Agachamento Livre com o mesmo range de séries e repetições.'},
     {id:'l-romeno',   nome:'Levantamento Terra Romeno com Barra',   series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
     {id:'l-ext-pern', nome:'Extensão de Pernas na Máquina',         series:2, reps:'8-10',  pesos:[null,null],            rest:75},
-    {id:'l-abducao',  nome:'Abdução de Quadril',                    series:2, reps:'8-10',  pesos:[null,null],            rest:60},
-    {id:'l-gemeos-pe',nome:'Elevação de Gêmeos em Pé',              series:3, reps:'8-10',  pesos:[null,null,null],       rest:60},
+    {id:'l-abducao',  nome:'Abdução de Quadril',                    series:2, reps:'8-10',  pesos:[null,null],            rest:60,  noWarmup:true},
+    {id:'l-gemeos-pe',nome:'Elevação de Gêmeos em Pé',              series:3, reps:'8-10',  pesos:[null,null,null],       rest:60,  noWarmup:true},
   ]},
   qua:{nome:'DESCANSO ATIVO',icone:'😴',tags:['Rest','Cardio','Mobilidade'],exercicios:[],dica:'Dia de descanso ativo. Aproveite para fazer cardio leve (corrida/bike) ou trabalho de mobilidade e flexibilidade.'},
   qui:{nome:'PUSH',icone:'🔥',tags:['Peito','Ombro','Tríceps','Push'],exercicios:[
     {id:'p-sup-ret',  nome:'Supino Reto com Halteres',              series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
     {id:'p-crucif-i', nome:'Crucifixo Inclinado com Halteres',      series:2, reps:'8-12',  pesos:[null,null],            rest:75},
     {id:'p-dev-mil',  nome:'Desenvolvimento Militar com Barra',     series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
-    {id:'p-el-pol',   nome:'Elevação Lateral na Polia',             series:2, reps:'10-12', pesos:[null,null],            rest:60},
+    {id:'p-el-pol',   nome:'Elevação Lateral na Polia',             series:2, reps:'10-12', pesos:[null,null],            rest:60,  noWarmup:true},
     {id:'p-mergulho', nome:'Mergulho em Barras Paralelas',          series:2, reps:'6-8',   pesos:[null,null],            rest:90, dica:'Barras paralelas (dips) — você se apoia nas duas barras e desce o corpo. Se ainda não tiver força suficiente, use o Graviton (máquina de assistência) para facilitar o movimento.'},
   ]},
   sex:{nome:'PULL',icone:'🏋️',tags:['Costas','Bíceps','Pull'],exercicios:[
     {id:'pu-bfix-n',  nome:'Barra Fixa com Pegada Neutra',          series:3, reps:'6-8',   pesos:[null,null,null],       rest:120},
     {id:'pu-rem-curv',nome:'Remada Curvada com Halteres',           series:3, reps:'8-10',  pesos:[null,null,null],       rest:90},
     {id:'pu-pux-alt', nome:'Puxada na Polia Alta',                  series:2, reps:'8-12',  pesos:[null,null],            rest:90},
-    {id:'pu-facepull',nome:'Face Pull com Corda',                   series:2, reps:'12-15', pesos:[null,null],            rest:60},
+    {id:'pu-facepull',nome:'Face Pull com Corda',                   series:2, reps:'12-15', pesos:[null,null],            rest:60,  noWarmup:true},
     {id:'pu-martelo', nome:'Rosca Martelo com Halteres',            series:2, reps:'8-10',  pesos:[null,null],            rest:75,  noWarmup:true},
   ]},
   sab:{nome:'LEGS — Glúteo & Quad',icone:'🦵',tags:['Pernas','Glúteo','Quadríceps','Legs'],exercicios:[
@@ -647,7 +665,7 @@ const TREINOS = {
     {id:'lg-legp45',  nome:'Leg Press 45°',                         series:3, reps:'8-10',  pesos:[null,null,null],       rest:90},
     {id:'lg-bulg',    nome:'Afundo Búlgaro com Halteres',           series:2, reps:'8-10',  pesos:[null,null],            rest:90},
     {id:'lg-hip',     nome:'Hip Thrust com Barra',                  series:3, reps:'8-12',  pesos:[null,null,null],       rest:90},
-    {id:'lg-gem-st',  nome:'Elevação de Gêmeos Sentado',            series:3, reps:'10-12', pesos:[null,null,null],       rest:60},
+    {id:'lg-gem-st',  nome:'Elevação de Gêmeos Sentado',            series:3, reps:'10-12', pesos:[null,null,null],       rest:60,  noWarmup:true},
   ]},
   dom:{nome:'DESCANSO ATIVO',icone:'😴',tags:['Rest','Cardio','Mobilidade'],exercicios:[],dica:'Dia de descanso ativo. Bom momento para cardio regenerativo ou alongamento geral.'},
 };
@@ -662,13 +680,67 @@ const DAYS = [
   {id:'dom',lbl:'Domingo',      short:'DOM'},
 ];
 const _dow = new Date().getDay(); // 0=Dom,1=Seg,2=Ter,3=Qua,4=Qui,5=Sex,6=Sáb
+
+// ════════════════════════════════════════════
+// PROGRAMA DE CORRIDA — 8 SEMANAS
+// ════════════════════════════════════════════
+const CARDIO_PROGRAMA = [
+  { // S1
+    objetivo:'Adaptação — criar o hábito sem se machucar',
+    qua:{tipo:'corrida',titulo:'Base 1 — Corrida/Caminhada',aquec:'5min caminhada leve',principal:'Alterne: 2min corrida + 2min caminhada × 5 rodadas',desaq:'3min caminhada',dur:'~25min',rpe:'4–5',obs:'Se não conseguir falar frases curtas, reduza. Terminar sentindo que poderia fazer mais.'},
+    sex:{tipo:'corrida',titulo:'Base 1 — Corrida/Caminhada',aquec:'5min caminhada leve',principal:'Alterne: 2min corrida + 2min caminhada × 5 rodadas',desaq:'3min caminhada',dur:'~25min',rpe:'4–5',obs:'Mesmo protocolo de quarta. Foco em consistência, não velocidade.'},
+    dom:{tipo:'corrida',titulo:'Regenerativo — Trotes Curtos',aquec:'N/A',principal:'20min caminhada com 3×1min de trote leve intercalado',desaq:'N/A',dur:'~20min',rpe:'3–4',obs:'Dia leve. Movimentar o corpo. Sem pressão alguma.'},
+  },
+  { // S2
+    objetivo:'Adaptação+ — ampliar os blocos de corrida',
+    qua:{tipo:'corrida',titulo:'Base 2 — Blocos de 3min',aquec:'5min caminhada',principal:'Alterne: 3min corrida + 2min caminhada × 5 rodadas',desaq:'3min caminhada',dur:'~28min',rpe:'5',obs:'Fôlego apertou? Reduza para 2min. Progressão, não sofrimento.'},
+    sex:{tipo:'corrida',titulo:'Base 2 — Blocos de 3min',aquec:'5min caminhada',principal:'Alterne: 3min corrida + 2min caminhada × 5 rodadas',desaq:'3min caminhada',dur:'~28min',rpe:'5',obs:'Pernas pesadas do Pull? Reduza para 2min de corrida sem culpa.'},
+    dom:{tipo:'corrida',titulo:'Regenerativo',aquec:'N/A',principal:'22min caminhada + 4×1min trote leve',desaq:'N/A',dur:'~22min',rpe:'3–4',obs:'Ritmo bem confortável. Fala completa o tempo todo.'},
+  },
+  { // S3
+    objetivo:'Base I — blocos maiores, ritmo constante',
+    qua:{tipo:'corrida',titulo:'Base 3 — Blocos de 4min',aquec:'5min caminhada',principal:'Alterne: 4min corrida + 2min caminhada × 4 rodadas',desaq:'3min caminhada',dur:'~29min',rpe:'5',obs:'Ritmo leve — frases curtas possíveis. Não acelere no meio do bloco.'},
+    sex:{tipo:'corrida',titulo:'Base 3 — Blocos de 4min',aquec:'5min caminhada',principal:'Alterne: 4min corrida + 2min caminhada × 4 rodadas',desaq:'3min caminhada',dur:'~29min',rpe:'5',obs:'Se semana pesada na academia, reduza blocos para 3min.'},
+    dom:{tipo:'corrida',titulo:'Corrida Livre Leve',aquec:'N/A',principal:'25min corrida/caminhada livre — sem protocolo fixo',desaq:'N/A',dur:'~25min',rpe:'4',obs:'Sem pressão de tempo nem intervalo fixo. Ouça o corpo.'},
+  },
+  { // S4
+    objetivo:'Deload — absorver os ganhos, descanso estratégico',
+    qua:{tipo:'corrida',titulo:'Deload — Corr/Cam Suave',aquec:'5min caminhada',principal:'Alterne: 4min corrida + 2min caminhada × 3 rodadas + caminhada',desaq:'5min caminhada',dur:'~25min',rpe:'4',obs:'Semana de recuperação. Não tente progredir. O corpo cresce no descanso.'},
+    sex:{tipo:'corrida',titulo:'Deload — Corr/Cam Suave',aquec:'5min caminhada',principal:'Alterne: 4min corrida + 2min caminhada × 3 rodadas',desaq:'5min caminhada',dur:'~25min',rpe:'4',obs:'Leve e consciente.'},
+    dom:{tipo:'caminhada',titulo:'Caminhada Ativa',aquec:'N/A',principal:'20–25min caminhada em ritmo confortável',desaq:'N/A',dur:'~22min',rpe:'3',obs:'Puro regenerativo. Caminha, respira, descansa.'},
+  },
+  { // S5
+    objetivo:'Base II — blocos longos, próximo da corrida contínua',
+    qua:{tipo:'corrida',titulo:'Base II — Blocos de 6min',aquec:'5min caminhada',principal:'Alterne: 6min corrida + 2min caminhada × 3x + 6min corrida final',desaq:'3min caminhada',dur:'~33min',rpe:'5–6',obs:'Não conseguiu 6min? Volte para 5min. Sem problema.'},
+    sex:{tipo:'corrida',titulo:'Base II — Blocos de 6min',aquec:'5min caminhada',principal:'Alterne: 6min corrida + 2min caminhada × 3 rodadas',desaq:'3min caminhada',dur:'~29min',rpe:'5',obs:'Pernas pesam do Pull. Se necessário, reduza para 5min de corrida.'},
+    dom:{tipo:'corrida',titulo:'Corrida Leve Contínua',aquec:'N/A',principal:'25min — corra o máximo possível, caminhe se precisar',desaq:'N/A',dur:'~25min',rpe:'4',obs:'Se correr 10–15min sem parar, é sinal claro de evolução.'},
+  },
+  { // S6
+    objetivo:'Continuidade — empurrar para blocos sem parar',
+    qua:{tipo:'corrida',titulo:'Blocos de 8min',aquec:'5min caminhada',principal:'Alterne: 8min corrida + 2min caminhada × 3 rodadas',desaq:'3min caminhada',dur:'~34min',rpe:'5–6',obs:'Você está quase lá. Mantenha ritmo lento e constante.'},
+    sex:{tipo:'corrida',titulo:'Corrida Contínua (tentativa)',aquec:'5min caminhada leve',principal:'Tente correr 15–20min sem parar. Se precisar, caminhe 1–2min e retome',desaq:'3min caminhada',dur:'~30min',rpe:'5–6',obs:'Devagar e contínuo supera rápido e parado.'},
+    dom:{tipo:'corrida',titulo:'Corrida Leve',aquec:'N/A',principal:'28min corrida leve com caminhadas se necessário',desaq:'N/A',dur:'~28min',rpe:'4',obs:'Leve, livre, sem protocolo fixo.'},
+  },
+  { // S7
+    objetivo:'Estruturação — volume maior e primeiros strides',
+    qua:{tipo:'corrida',titulo:'Contínua + Intervalo',aquec:'5min caminhada',principal:'10–15min contínuos + 2min caminhada + 10min contínuos',desaq:'3min caminhada',dur:'~33min',rpe:'5–6',obs:'Ainda difícil? Reduza para 8min + cam + 8min. Sem drama.'},
+    sex:{tipo:'corrida',titulo:'Corrida + Strides',aquec:'5min caminhada + 5min corrida leve',principal:'20min corrida leve + 4 strides de 20s (acelere levemente, não sprint)',desaq:'3min caminhada',dur:'~35min',rpe:'5–6',obs:'Stride = ~75% do seu máximo por 20s. Caminhe 40s entre cada um.'},
+    dom:{tipo:'corrida',titulo:'Corrida Contínua Leve',aquec:'N/A',principal:'30min corrida leve — caminhe se precisar',desaq:'N/A',dur:'~30min',rpe:'4–5',obs:'Se correr 25min+ aqui, você está muito próximo dos 5km.'},
+  },
+  { // S8
+    objetivo:'Peak — teste de evolução e consolidação',
+    qua:{tipo:'corrida',titulo:'🎯 Teste — Máximo Contínuo',aquec:'5min caminhada + 5min corrida leve',principal:'Corra o máximo contínuo que conseguir. Pare se precisar, mas tente bater seu recorde',desaq:'5min caminhada',dur:'~40min',rpe:'6',obs:'Não precisa ser 5km hoje. Qualquer progresso conta. Este é seu teste.'},
+    sex:{tipo:'corrida',titulo:'Corrida + Strides',aquec:'5min caminhada + 5min leve',principal:'25min corrida + 5 strides de 20s ao final',desaq:'3min caminhada',dur:'~38min',rpe:'6',obs:'Strides um pouco mais fortes que semana passada. Ainda não são sprints máximos.'},
+    dom:{tipo:'corrida',titulo:'🏆 Corrida de Celebração',aquec:'N/A',principal:'30min corrida leve — celebre as 8 semanas',desaq:'N/A',dur:'~30min',rpe:'4–5',obs:'Seja qual for o resultado, você evoluiu. Aproveite.'},
+  },
+];
 // Map JS day to DAYS index: Mon=0,Tue=1,Wed=2,Thu=3,Fri=4,Sat=5,Sun=6
 const _dowMap = {1:0,2:1,3:2,4:3,5:4,6:5,0:6};
 const TODAY_IDX = _dowMap[_dow] ?? -1;
 
 // Which days have active training (user-configurable, saved in S)
 function getActiveDays() {
-  if(!S.activeDays) return ['seg','ter','qui','sex','sab']; // default: Upper/Lower/Push/Pull/Legs
+  if(!S.activeDays) return ['seg','ter','qua','qui','sex','sab']; // default inclui qua p/ programa de corrida
   return S.activeDays;
 }
 
@@ -755,9 +827,11 @@ function showSyncToast(msg, ok=true) {
 // ════════════════════════════════════════════
 let S = {};
 try { S = JSON.parse(localStorage.getItem('fgym2') || '{}'); } catch{}
-if(!S.history) S.history = [];
-if(!S.pesos)   S.pesos   = {};
-if(!S.streak)  S.streak  = 0;
+if(!S.history)       S.history       = [];
+if(!S.pesos)         S.pesos         = {};
+if(!S.aquecPesos)    S.aquecPesos    = {};
+if(!S.streak)        S.streak        = 0;
+if(!S.corridaSemana) S.corridaSemana = 1;
 
 function save() {
   S._updatedAt = Date.now();
@@ -810,7 +884,20 @@ function _doNav(v) {
 function renderWeek() {
   const el = document.getElementById('v-week');
   const activeDays = getActiveDays();
-  let h = '<div class="slabel">Esta Semana</div>';
+  const semIdx = Math.min((S.corridaSemana||1)-1, CARDIO_PROGRAMA.length-1);
+  const semObj = CARDIO_PROGRAMA[semIdx];
+  let h = `<div class="corrida-semana-banner">
+    <div class="csb-top">
+      <span class="csb-label">🏃 PROGRAMA DE CORRIDA</span>
+      <div class="csb-nav">
+        <button class="csb-btn" onclick="mudaSemanaCorreida(-1)" ${S.corridaSemana<=1?'disabled':''}>‹</button>
+        <span class="csb-num">Semana ${S.corridaSemana}/8</span>
+        <button class="csb-btn" onclick="mudaSemanaCorreida(1)" ${S.corridaSemana>=8?'disabled':''}>›</button>
+      </div>
+    </div>
+    <div class="csb-obj">${semObj.objetivo}</div>
+  </div>`;
+  h += '<div class="slabel" style="margin-top:14px">Esta Semana</div>';
   DAYS.forEach((d,i) => {
     const t = TREINOS[d.id];
     const today = i === TODAY_IDX;
@@ -841,6 +928,12 @@ function renderWeek() {
     }
   });
   el.innerHTML = h;
+}
+
+function mudaSemanaCorreida(delta) {
+  S.corridaSemana = Math.max(1, Math.min(8, (S.corridaSemana||1) + delta));
+  save();
+  renderWeek();
 }
 
 function toggleDayActive(dayId) {
@@ -971,21 +1064,31 @@ function renderTreino() {
 
   // CARDIO BLOCK
   const cSaved = sessionCardio.saved;
-  const cDist = sessionCardio.dist;
-  const cBadge = cSaved ? `<span class="cardio-saved-badge">✓ ${sessionCardio.dist}km registrado</span>` : '<span style="font-size:11px;color:var(--txt3)">Opcional</span>';
+  const _semIdx = Math.min((S.corridaSemana||1)-1, CARDIO_PROGRAMA.length-1);
+  const _prescr = CARDIO_PROGRAMA[_semIdx]?.[currentDayId];
+  const cBadge = cSaved ? `<span class="cardio-saved-badge">✓ ${sessionCardio.dist}km registrado</span>` : (_prescr ? `<span style="font-size:11px;color:var(--bl)">S${S.corridaSemana}</span>` : '<span style="font-size:11px;color:var(--txt3)">Opcional</span>');
+  const cardioTitle = _prescr ? _prescr.titulo : 'Cardio';
+  const cardioSub   = _prescr ? (_prescr.dur + ' · RPE ' + _prescr.rpe) : 'Corrida ou Bike';
+  const cardioIcon  = _prescr?.tipo === 'caminhada' ? '🚶' : (sessionCardio.type==='bike'?'🚴':'🏃');
   h += `<div class="cardio-block" id="cardio-block">
     <div class="cardio-hdr" onclick="toggleCardio()">
-      <div class="cardio-icon">${sessionCardio.type==='bike'?'🚴':'🏃'}</div>
+      <div class="cardio-icon">${cardioIcon}</div>
       <div class="cardio-info">
-        <div class="cardio-title">Cardio</div>
-        <div class="cardio-sub">Corrida ou Bike</div>
+        <div class="cardio-title">${cardioTitle}</div>
+        <div class="cardio-sub">${cardioSub}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         ${cBadge}
         <svg class="cardio-caret" id="cardio-caret" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
     </div>
-    <div class="cardio-body" id="cardio-body">
+    <div class="cardio-body${TREINOS[currentDayId]?.exercicios.length===0?' open':''}" id="cardio-body">
+      ${_prescr ? `<div class="cardio-prescricao">
+        <div class="cp-row"><span class="cp-ico">🔥</span><div><span class="cp-lbl">Aquecimento</span><span class="cp-val">${_prescr.aquec}</span></div></div>
+        <div class="cp-row"><span class="cp-ico">▶</span><div><span class="cp-lbl">Principal</span><span class="cp-val">${_prescr.principal}</span></div></div>
+        ${_prescr.desaq !== 'N/A' ? `<div class="cp-row"><span class="cp-ico">❄️</span><div><span class="cp-lbl">Desaquecimento</span><span class="cp-val">${_prescr.desaq}</span></div></div>` : ''}
+        <div class="cp-row"><span class="cp-ico">💬</span><div><span class="cp-lbl">Dica do plano</span><span class="cp-val cp-obs">${_prescr.obs}</span></div></div>
+      </div>` : ''}
       <div class="cardio-type-row">
         <button class="ctype${sessionCardio.type==='corrida'?' sel':''}" onclick="setCardioType('corrida')">🏃 Corrida</button>
         <button class="ctype${sessionCardio.type==='bike'?' sel':''}" onclick="setCardioType('bike')">🚴 Bike</button>
