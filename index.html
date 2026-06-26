@@ -544,12 +544,8 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
     <div id="v-treino" class="view"></div>
     <!-- DASHBOARD -->
     <div id="v-dash" class="view"></div>
-    <!-- HISTÓRICO -->
-    <div id="v-hist" class="view"></div>
     <!-- EDITAR -->
     <div id="v-edit" class="view"></div>
-    <!-- METAS -->
-    <div id="v-metas" class="view"></div>
   </div>
 
   <div id="navbar">
@@ -564,14 +560,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font
     <button class="nb" id="nb-edit">
       <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
       EDITAR
-    </button>
-    <button class="nb" id="nb-metas">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>
-      METAS
-    </button>
-    <button class="nb" id="nb-hist">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
-      HISTÓRICO
     </button>
   </div>
 </div>
@@ -873,9 +861,7 @@ function _doNav(v) {
   const nbEl = document.getElementById('nb-' + v);
   if(nbEl) nbEl.classList.add('on');
   if(v==='dash') { window._dashTab = window._dashTab||'stats'; renderDash(); }
-  if(v==='hist') renderHist();
   if(v==='edit') renderEdit(editDayId||'seg');
-  if(v==='metas') renderMetas();
 }
 
 // ════════════════════════════════════════════
@@ -1010,9 +996,9 @@ function openTreino(dayId) {
     restDefaults[ex.id] = ex.rest;
   });
 
-  renderTreino();
   nav('treino');
   document.getElementById('nb-week').classList.add('on');
+  renderTreino();
 }
 
 function renderTreino() {
@@ -2698,8 +2684,6 @@ document.addEventListener('DOMContentLoaded', async function() {
   document.getElementById('nb-week').addEventListener('click', () => nav('week'));
   document.getElementById('nb-dash').addEventListener('click', () => nav('dash'));
   document.getElementById('nb-edit').addEventListener('click', () => nav('edit'));
-  document.getElementById('nb-metas').addEventListener('click', () => nav('metas'));
-  document.getElementById('nb-hist').addEventListener('click', () => nav('hist'));
 
   // Check for saved session
   const hasSession = await checkSavedSession();

@@ -1,4 +1,4 @@
-const CACHE = 'forja-gym-v12';
+const CACHE = 'forja-gym-v13';
 const STATIC = [
   './manifest.json',
   './icon-192.png',
